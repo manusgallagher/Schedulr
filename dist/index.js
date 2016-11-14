@@ -1,16 +1,23 @@
+var globalUser = "";
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
     	console.log("Logged in");
+    	globalUser = user;
 
         new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + user.uid).once('value', function(snap) {
             if (snap.val() == null) {
+            	//--Closing Signup and Login Modals--
             	console.log("You Need to Add User Details...");
             	$('#loginModal').modal("hide");
             	$('#signupModal').modal("hide");
+            	$('#companyModal').modal("hide");
             	$('#addDetailsModal').modal({
 				  backdrop: 'static',
 				  keyboard: false
 				});
+				
+
             }else{
             	console.log("You Don't Need to Add User Details...");
             }
@@ -64,13 +71,17 @@ $("#AddDetailsBtn").click(
 		var surname 	= $("#AddDetailsSurname").val();
 		var address		= $("#AddDetailsAddressL1").val()+", "+$("#AddDetailsAddressL2").val()+", "+$("#AddDetailsAddressL3").val()+", "+$("#AddDetailsCounty").val();
 		var dob 		= $("#AddDetailsDOB").val();
-		var phonenumber = $("#AddDetailsPhone").val();
+		var phoneNumber = $("#AddDetailsPhone").val();
 
-		console.log(name);
-		console.log(surname);
-		console.log(address);
-		console.log(dob);
-		console.log(phonenumber);
+		firebase.database().ref('users/' + globalUser.uid).set({
+            Name: name,
+            Surname: surname,
+            DOB: dob,
+            Address: address,
+            Phone: phoneNumber,
+            Email: globalUser.email
+        });
+
 	}
 );
 
