@@ -92,7 +92,7 @@
 	}(_react2.default.Component);
 
 	var app = document.getElementById('app');
-	_reactDom2.default.render(_react2.default.createElement(Main, null), app);
+	//ReactDOM.render(<Main />, app);
 
 /***/ },
 /* 1 */

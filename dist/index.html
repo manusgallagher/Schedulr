@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Schedulr</title>
+		<script src="https://use.fontawesome.com/2e792b6b4b.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	</head>
@@ -17,10 +18,10 @@
 		        <div class="modal-header">
 		          <img class="ModalHeader" src="img/logo.png" alt="logo">
 		        </div>
-		        <div class="modal-body LoginModal">
+		        <div id="loginBodyFields" class="modal-body LoginModal">
 		          <p id="loginError"></p>
 		            <div class="form-group LoginInput">
-		              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
+		              <label for="usrname"><span class="glyphicon glyphicon-user"></span>Username</label>
 		              <input type="text" class="form-control" id="loginemail" placeholder="Enter email">
 		            </div>
 		            <div class="form-group LoginInput">
@@ -29,10 +30,15 @@
 		            </div>
 		            <button id="loginBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Login</button>
 		        </div>
+		        <div id="loadingLogin" class="modal-body LoginModal">
+		        	<br>
+		        	<i class="fa fa-5x fa-spinner fa-spin"></i>
+		        	<br>
+		        </div>
 		        <div class="modal-footer">
 		          <p>Not a member? <a id="signup-link">Sign Up</a></p>
-		          <p>Forgot <a href="#">Password?</a></p>
-		          <p><a id="signoutlink">Sign out</a></p>
+		          <p>Forgot <a href="home.html">Password?</a></p>
+		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
 		        </div>
 		      </div>
 		    </div>
@@ -50,7 +56,7 @@
 		        <div class="modal-header">
 		          <img class="ModalHeader" src="img/logo.png" alt="logo">
 		        </div>
-		        <div class="modal-body LoginModal">
+		        <div id="signUpBodyFields" class="modal-body LoginModal">
 		        	<p id="signUpError"></p>
 		            <div class="form-group LoginInput">
 		              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
@@ -63,6 +69,11 @@
 		            </div>
 
 		            <button type="submit" id="signupBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Create</button>
+		        </div>
+		        <div id="loadingSignUp" class="modal-body LoginModal">
+		        	<br>
+		        	<i class="fa fa-4x fa-spinner fa-spin"></i>
+		        	<br>
 		        </div>
 		        <div class="modal-footer">
 		          <p>Have an Account? <a id="login-link">Log In</a></p>
@@ -179,6 +190,9 @@
 			         <br>			            
 			         <button id="AddDetailsBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Save Details</button>
 		        </div>
+		        <div class="modal-footer">
+		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
+		        </div>
 		      </div>
 		    </div>
 		  </div> 
@@ -194,21 +208,15 @@
 		          <img class="ModalHeader" src="img/logo.png" alt="logo">
 		        </div>
 		        <div class="modal-body LoginModal">
-		          <button>Create Company</button>
-		          <button>Join Company</button>
+		          <a href="#" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-plus"></span> Create Company</a>
+		          <a href="#" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-cloud"></span> Join Company</a>
 		        </div>
 		        <div class="modal-footer">
-		          <p>Not a member? <a id="signup-link">Sign Up</a></p>
-		          <p>Forgot <a href="#">Password?</a></p>
-		          <p><a id="signoutlink">Sign out</a></p>
+		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
 		        </div>
-		      </div>
 		    </div>
 		  </div> 
 		</div>
-
-		<!-- React app will be injected into the following `div` element: -->
-		<div id="app"></div>
 
 		<!-- Include Firebase Credentials: -->
 		<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>

@@ -1,5 +1,5 @@
 var globalUser = "";
-
+$("#loadingLogin").hide();
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
     	console.log("Logged in");
@@ -20,6 +20,13 @@ firebase.auth().onAuthStateChanged(function(user) {
 
             }else{
             	console.log("You Don't Need to Add User Details...");
+            	$('#loginModal').modal("hide");
+            	$('#signupModal').modal("hide");
+            	$('#addDetailsModal').modal("hide");
+            	$('#companyModal').modal({
+				  backdrop: 'static',
+				  keyboard: false
+				});
             }
         });
 
@@ -36,11 +43,16 @@ $('#loginModal').modal({
 
 $("#signup-link").click(
 	function(){
+		$("#signUpBodyFields").show();
+        $("#loadingSignUp").hide();        
 		$('#loginModal').modal('hide');
 		$('#signupModal').modal({
 			backdrop: 'static',
 			keyboard: false
 		});
+
+		$("#loginemail").val("");
+		$("#loginpswd").val("");
 	}
 );
 
@@ -61,7 +73,15 @@ $("#loginBtn").click(
 
 		firebase.auth().signInWithEmailAndPassword(email, pswd).catch(function(error) {
             $("#loginError").show().text(error.message);
+            $("#loginBodyFields").show();
+			$("#loadingLogin").hide();
         });
+
+        $("#loginBodyFields").hide();
+		$("#loadingLogin").show();
+
+        $("#loginemail").val("");
+        $("#loginpswd").val("");
 	}
 );
 
@@ -81,6 +101,12 @@ $("#AddDetailsBtn").click(
             Phone: phoneNumber,
             Email: globalUser.email
         });
+
+        $('#addDetailsModal').modal("hide");
+        	$('#companyModal').modal({
+			  backdrop: 'static',
+			  keyboard: false
+			});
 
 	}
 );
@@ -104,7 +130,13 @@ $("#signupBtn").click(
 
             firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
                 $("#signUpError").show().text(error.message);
+                $("#signUpBodyFields").show();
+            	$("#loadingSignUp").hide();
             });
+
+            
+            $("#signUpBodyFields").hide();
+            $("#loadingSignUp").show();
 
             $("#signupemail").val("");
             $("#signuppsw").val("");
@@ -113,8 +145,9 @@ $("#signupBtn").click(
     }
 );
 
-$("#signoutlink").click(
+$(".signoutlink").click(
 	function(){
+		console.log("testing");
 		firebase.auth().signOut().then(function() {
             // Sign-out successful.
 
@@ -122,5 +155,15 @@ $("#signoutlink").click(
             // An error happened.
             alert(error.message);
         });
+
+		$("#loginBodyFields").show();
+		$("#loadingLogin").hide();
+        $('#companyModal').modal("hide");
+    	$('#signupModal').modal("hide");
+    	$('#addDetailsModal').modal("hide");
+        $('#loginModal').modal({
+			backdrop: 'static',
+			keyboard: false
+		});
 	}
 );
