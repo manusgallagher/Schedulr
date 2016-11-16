@@ -4,239 +4,41 @@
 		<meta charset="UTF-8">
 		<title>Schedulr</title>
 		<script src="https://use.fontawesome.com/2e792b6b4b.js"></script>
-		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="lib/react-drawer.css">
+		<link rel="stylesheet" type="text/css" href="style.css">
+		
+	    <script async src="bundle.js"></script>
 	</head>
 	<body>
 		<!--Login Modal -->
-		<div class="login-container">
-		  <!-- Modal -->
-		  <div class="modal fade" id="loginModal" role="dialog">
-		    <div class="modal-dialog">
-		      <!-- Modal content-->
-		      <div class="modal-content">
-		        <div class="modal-header">
-		          <img class="ModalHeader" src="img/logo.png" alt="logo">
-		        </div>
-		        <div id="loginBodyFields" class="modal-body LoginModal">
-		          <p id="loginError"></p>
-		            <div class="form-group LoginInput">
-		              <label for="usrname"><span class="glyphicon glyphicon-user"></span>Username</label>
-		              <input type="text" class="form-control" id="loginemail" placeholder="Enter email">
-		            </div>
-		            <div class="form-group LoginInput">
-		              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-		              <input type="password" class="form-control" id="loginpswd" placeholder="Enter password">
-		            </div>
-		            <button id="loginBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Login</button>
-		        </div>
-		        <div id="loadingLogin" class="modal-body LoginModal">
-		        	<br>
-		        	<i class="fa fa-5x fa-spinner fa-spin"></i>
-		        	<br>
-		        </div>
-		        <div class="modal-footer">
-		          <p>Not a member? <a id="signup-link">Sign Up</a></p>
-		          <p>Forgot <a href="home.html">Password?</a></p>
-		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
-		        </div>
-		      </div>
-		    </div>
-		  </div> 
-		</div>
+		<div id="loginForm"></div>
 
 		<!-- Sign Up Modal -->
-		<div class="signup-container">
-		  <!-- Modal -->
-		  <div class="modal fade" id="signupModal" role="dialog">
-		    <div class="modal-dialog">
+		<div id="signUpForm"></div>		
 
-		      <!-- Modal content-->
-		      <div class="modal-content">
-		        <div class="modal-header">
-		          <img class="ModalHeader" src="img/logo.png" alt="logo">
-		        </div>
-		        <div id="signUpBodyFields" class="modal-body LoginModal">
-		        	<p id="signUpError"></p>
-		            <div class="form-group LoginInput">
-		              <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
-		              <input type="text" class="form-control" id="signupemail" placeholder="Enter email">
-		            </div>
-		            <div class="form-group LoginInput">
-		              <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-		              <input type="password" class="form-control" id="signuppsw" placeholder="Enter password"><br>
-		              <input type="password" class="form-control" id="confpsw" placeholder="Confirm password">
-		            </div>
+		<!-- User Details Modal -->
+		<div id="addUserDetails"></div>
+		
+		<!-- Company Decision Modal -->
+		<div id="companyRegistration"></div>
 
-		            <button type="submit" id="signupBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Create</button>
-		        </div>
-		        <div id="loadingSignUp" class="modal-body LoginModal">
-		        	<br>
-		        	<i class="fa fa-4x fa-spinner fa-spin"></i>
-		        	<br>
-		        </div>
-		        <div class="modal-footer">
-		          <p>Have an Account? <a id="login-link">Log In</a></p>
-		        </div>
-		      </div>
-		    </div>
-		  </div> 
-		</div>
+		<!-- Nav Bar -->
+		<div id="navigation"></div>
 
-		<!-- Additonal User Details -->
-		<div class="addDetails-container">
-		  <!-- Modal -->
-		  <div class="modal fade" id="addDetailsModal" role="dialog">
-		    <div class="modal-dialog">
-		      <!-- Modal content-->
-		      <div class="modal-content">
-		        <div class="modal-header">
-		          <img class="ModalHeader" src="img/logo.png" alt="logo">
-		        </div>
-		        <div class="modal-body LoginModal">
-		          <p id="AdditionalInputError"></p>
-		          	<table>
-		          		<tr>
-		          			<td class="AdditionalDetailsHeader">*First Name:</td>
-				            <td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsName" placeholder="First Name...">
-					            </div>
-				            </td>
-				            <td class="AdditionalDetailsHeader">*Address Line 1:</td>
-				            <td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsAddressL1" placeholder="Address Line 1...">
-					            </div>
-				            </td>
-			            </tr>
-			            <tr>
-			            	<td class="AdditionalDetailsHeader">*Surname:</td>
-			            	<td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsSurname" placeholder="Surname...">
-					            </div>
-					        </td>
-					        <td class="AdditionalDetailsHeader">*Address Line 2:</td>
-				            <td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsAddressL2" placeholder="Address Line 2...">
-					            </div>
-				            </td>
-					    </tr>
-					    <tr>
-					    	<td class="AdditionalDetailsHeader">*DOB:</td>
-					    	<td>
-					            <div class="form-group AdditonalInfoInput">
-									<input type="date" class="form-control" id="AddDetailsDOB">
-					            </div>
-			            	</td>
-			            	<td class="AdditionalDetailsHeader">Address Line 3:</td>
-				            <td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsAddressL3" placeholder="Address Line 3...">
-					            </div>
-				            </td>
-			            </tr>
-			            <tr>
-			            	<td class="AdditionalDetailsHeader">*Phone Number:</td>
-			            	<td>
-					            <div class="form-group AdditonalInfoInput">
-					              <input type="text" class="form-control" id="AddDetailsPhone" placeholder="Phone Number...">
-					            </div>
-					        </td>
-					        <td class="AdditionalDetailsHeader">*County:</td>
-				            <td>
-					            <div class="form-group AdditonalInfoInput">
-									<select name="county" id="AddDetailsCounty" class="form-control" placeholder="County...">
-										<option>-- Select a County --</option>
-										<option value="Antrim">Antrim</option>
-										<option value="Armagh">Armagh</option>
-										<option value="Carlow">Carlow</option>
-										<option value="Cavan">Cavan</option>
-										<option value="Clare">Clare</option>
-										<option value="Cork">Cork</option>
-										<option value="Derry">Derry</option>
-										<option value="Donegal">Donegal</option>
-										<option value="Down">Down</option>
-										<option value="Dublin">Dublin</option>
-										<option value="Fermanagh">Fermanagh</option>
-										<option value="Galway">Galway</option>
-										<option value="Kerry">Kerry</option>
-										<option value="Kildare">Kildare</option>
-										<option value="Kilkenny">Kilkenny</option>
-										<option value="Laois">Laois</option>
-										<option value="Leitrim">Leitrim</option>
-										<option value="Limerick">Limerick</option>
-										<option value="Longford">Longford</option>
-										<option value="Louth">Louth</option>
-										<option value="Mayo">Mayo</option>
-										<option value="Meath">Meath</option>
-										<option value="Monaghan">Monaghan</option>
-										<option value="Offaly">Offaly</option>
-										<option value="Roscommon">Roscommon</option>
-										<option value="Sligo">Sligo</option>
-										<option value="Tipperary">Tipperary</option>
-										<option value="Tyrone">Tyrone</option>
-										<option value="Waterford">Waterford</option>
-										<option value="Westmeath">Westmeath</option>
-										<option value="Wexford">Wexford</option>
-										<option value="Wicklow">Wicklow</option>
-									</select>
-					            </div>
-				            </td>
-			            </tr>
-			         </table>
-			         <br>			            
-			         <button id="AddDetailsBtn" class="btn btn-default btn-success"><span class="glyphicon glyphicon-off"></span> Save Details</button>
-		        </div>
-		        <div class="modal-footer">
-		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
-		        </div>
-		      </div>
-		    </div>
-		  </div> 
-		</div>
-
-		<div class="company-container">
-		  <!-- Modal -->
-		  <div class="modal fade" id="companyModal" role="dialog">
-		    <div class="modal-dialog">
-		      <!-- Modal content-->
-		      <div class="modal-content">
-		        <div class="modal-header">
-		          <img class="ModalHeader" src="img/logo.png" alt="logo">
-		        </div>
-		        <div class="modal-body LoginModal">
-		          <a href="#" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-plus"></span> Create Company</a>
-		          <a href="#" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-cloud"></span> Join Company</a>
-		        </div>
-		        <div class="modal-footer">
-		          <p><a class="signoutlink" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-log-out"></span> Sign Out</a></p>
-		        </div>
-		    </div>
-		  </div> 
-		</div>
-
-		<!-- Include Firebase Credentials: -->
+		<!-- Include Firebase Credentials: -->		
 		<script src="https://www.gstatic.com/firebasejs/3.5.2/firebase.js"></script>
-		<script>
-		// Initialize Firebase
-		var config = {
-		apiKey: "AIzaSyCKdSUYC1-raEz2XZM25byvsZ-r5OyBAz4",
-		authDomain: "schedulr-c0fd7.firebaseapp.com",
-		databaseURL: "https://schedulr-c0fd7.firebaseio.com",
-		storageBucket: "schedulr-c0fd7.appspot.com",
-		messagingSenderId: "681705037364"
-		};
-		firebase.initializeApp(config);
-		</script>
+		<script src="firebaseconfig.js"></script>
 		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 
 		<!-- Include bundled JavaScript: -->
 		<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-		<script src="bundle.js"></script>
-		<script src="index.js"></script>
+		<script src="https://unpkg.com/react@15.3.0/dist/react.js"></script>
+	    <script src="https://unpkg.com/react-dom@15.3.0/dist/react-dom.js"></script>
+	    <script src="lib/react-drawer.min.js"></script>
+	    <script src="index.js"></script>
 	</body>
 </html>

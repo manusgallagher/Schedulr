@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import ReactDrawer from 'react-drawer';
 
 
-class Main extends React.Component {
+class NavBar extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -48,7 +48,7 @@ class Main extends React.Component {
 			   <div className ="navbar-helpme">
 			      <p className = "navbar-text">
 			        Hi Manus{' '}
-			     	<a href="#" className="btn btn-xs btn-default"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
+			     	<a href="#" className="btn btn-xs btn-default signOut"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
 			     </p>
 			   </div>		   
 			</nav>
@@ -79,4 +79,4 @@ class Main extends React.Component {
   }
 }
 
-ReactDOM.render(<Main />, document.getElementById('app'));
+ReactDOM.render(<NavBar />, document.getElementById('navigation'));

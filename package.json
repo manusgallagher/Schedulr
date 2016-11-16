@@ -16,7 +16,8 @@
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.2"
+    "webpack-dev-server": "^1.16.2",
+    "webpack-hot-middleware": "^2.13.2"
   },
   "dependencies": {
     "material-ui": "^0.16.2",

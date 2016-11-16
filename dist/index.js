@@ -1,6 +1,8 @@
 var globalUser = "";
 
 $("#loadingLogin").hide();
+$("#navigation").hide();
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
     	console.log("Logged in");
@@ -148,7 +150,6 @@ $("#signupBtn").click(
 
 $(".signoutlink").click(
 	function(){
-		console.log("testing");
 		firebase.auth().signOut().then(function() {
             // Sign-out successful.
 
@@ -167,4 +168,56 @@ $(".signoutlink").click(
 			keyboard: false
 		});
 	}
+);
+
+$(".joinCompany").click(
+    function(){
+        $('#loginModal').modal('hide');
+        $('#signupModal').modal('hide');
+        $('#addDetailsModal').modal('hide');
+        $('#companyModal').modal('hide');
+        $("#navigation").show();
+    }
+);
+
+$(".createCompany").click(
+    function(){
+        $('#loginModal').modal('hide');
+        $('#signupModal').modal('hide');
+        $('#addDetailsModal').modal('hide');
+        $('#companyModal').modal('hide');
+        $("#navigation").show();
+    }
+);
+
+$(".createCompany").click(
+    function(){
+        $('#loginModal').modal('hide');
+        $('#signupModal').modal('hide');
+        $('#addDetailsModal').modal('hide');
+        $('#companyModal').modal('hide');
+        $("#navigation").show();
+    }
+);
+
+$(".signOut").click(
+    function(){
+        firebase.auth().signOut().then(function() {
+            // Sign-out successful.
+
+        }, function(error) {
+            // An error happened.
+            alert(error.message);
+        });
+        
+        $('#signupModal').modal('hide');
+        $('#addDetailsModal').modal('hide');
+        $('#companyModal').modal('hide');
+        $("#navigation").hide();
+
+        $('#loginModal').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
+    }
 );
