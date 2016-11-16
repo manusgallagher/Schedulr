@@ -44,7 +44,82 @@
 }
 
 .navBarLogo{
-	margin-top: -1%;
-	width:20%;
-	height: 200%;
+	width:auto;
+	height: 3em;
+}
+
+
+.navbar-custom {
+    background-color:#5959b3;
+    color:#ffffff;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+}
+.navbar-helpme{
+	float: right;
+}
+
+.navbar-custom a{
+    color: #a6a64c;
+}
+
+body {
+	width: 100%;
+	height: 95%;
+}
+
+.nav-drawer{
+	height: 100%;
+	width: 100%;
+	font-size: 200%;
+	text-align: center;
+	background-color: #b7b7db;
+	position: relative;
+}
+
+.nav-drawer-item{
+	color: black;
+}
+
+.nav-drawer a:hover{
+	text-decoration: none;
+	color: #f4f4e9;
+	cursor: pointer;
+}
+
+.nav-drawer-links{
+	text-align: left;
+	display: inline-block;
+}
+
+.navDrawerLogo{
+	width:70%;
+	height: auto;
+	margin-top: 2%;
+	margin-bottom: 2%;
+}
+
+.drawerBtn{
+  background:none;
+  border:none;
+  font-size:2em;
+  color:#eeeef7;
+  vertical-align: middle;
+  margin-right: 0.2em;
+}
+
+.navBarLogoPosition{
+	margin-top:0.3em;
+	margin-left:0.3em;
+}
+
+.active{
+	color:#f4f4e9;
+}
+
+#profileLink {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 0.5em;
 }

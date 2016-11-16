@@ -1,4 +1,5 @@
 var globalUser = "";
+
 $("#loadingLogin").hide();
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
