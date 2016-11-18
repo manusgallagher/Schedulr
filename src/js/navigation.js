@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import ReactDrawer from 'react-drawer';
 
 
-class NavBar extends React.Component {
-  constructor() {
+export default class Authentication extends React.Component {
+	 constructor() {
     super();
     this.state = {
       open: false,
@@ -78,5 +78,3 @@ class NavBar extends React.Component {
     );
   }
 }
-
-ReactDOM.render(<NavBar />, document.getElementById('navigation'));
