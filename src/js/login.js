@@ -3,6 +3,19 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router'
 
 export default React.createClass({
+  logIn: function() {
+          var email = $("#loginemail").val();
+          var pswd = $("#loginpswd").val();
+
+          firebase.auth().signInWithEmailAndPassword(email, pswd).catch(function(error) {
+              $("#loginError").show().text(error.message);
+              $("#loginBodyFields").show();
+              $("#loadingLogin").hide();
+          });
+
+          $("#loginBodyFields").hide();
+          $('#loadingLogin').append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+    },
   render() {
     return (
       <div>
@@ -17,13 +30,12 @@ export default React.createClass({
             <input type="password" className="form-control" id="loginpswd" placeholder="Enter password" />
           </div> 
           <br/>
-          <button id="loginBtn" className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Login</button>
+          <button onClick={this.logIn}className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Login</button>
         </div>
         <div id="loadingLogin" className="modal-body LoginModal"></div>
         <div className="modal-footer">
           <p>Not a member? <Link to='/signup' id="signup-link">Sign Up</Link></p>
           <p>Forgot <a>Password?</a></p>
-          <p><a className="signoutlink"><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>
         </div>
       </div>
     );

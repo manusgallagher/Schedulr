@@ -7,6 +7,9 @@ import CompanyRegistration from './companyregistration'
 import AddUserDetails from './adduserdetails'
 import NavBar from './navigation'
 
+/* 
+ * ROUTE RENDERING CODE.
+ */
 
 ReactDOM.render((
   <Router history={hashHistory}>
@@ -28,35 +31,62 @@ ReactDOM.render((
   </Router>
 ), document.getElementById("navigation"))
 
+const openAppRoute = (route) => {
+  // Helper function to navigation to a different route programmatically.
+  hashHistory.push(route);
+};
+window.openAppRoute = openAppRoute;
+
+
+/* PAGE SETUP CODE.
+ * Migrated from Index.js.
+ */
+
+$(document).ready(function () {
+    pageSetup();             
+});
+
+$(window).on('hashchange', pageSetup);
+
+function pageSetup(){
+    var url = window.location.href;
+    var lastSegment = url.split('/').pop();
+
+    if (lastSegment == "home"){
+        $('#AuthenticationModal').modal("hide");
+    }else{
+         $('#AuthenticationModal').modal({
+          backdrop: 'static',
+          keyboard: false
+        });
+    }
+}
+
 /* AUTHENTICATION CODE.
- * Migrating to here from Index.js.
+ * Migrated from Index.js.
  * Easier Maintained and Guranteed to work.
  */
-$("#loginBtn").click(
-    function(){
-        /*var spinner = '<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />';
-        $('#loginBodyFields').hide();
-        $('#loadingLogin').append(spinner);*/
-        var url = window.location.href;
-        var lastSegment = url.split('/');
-        var newUrl = "http://";
-        
-        for(var i=1; i<lastSegment.length-1; i++){
-            if(lastSegment[i]!=""){
-              newUrl+=lastSegment[i]+'/';
+var globalUser = "";
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        console.log("Logged in");
+        globalUser = user;
+
+        new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + user.uid).once('value', function(snap) {
+            if (snap.val() == null) {
+              //--Closing Signup and Login Modals--
+              console.log("You Need to Add User Details...");
+              window.openAppRoute("/adduserdetails");
+            }else{
+              console.log("You Don't Need to Add User Details...");
+              if(snap.val().EmployeeOf || snap.val().EmployerOf){
+                 window.openAppRoute("/home");
+              }else{
+                console.log("Whatchu talking bout Willis?");
+              }
             }
-
-        }
-        newUrl+='adduserdetails'
-        window.location.href = newUrl;
+        });
+    } else {
+        console.log("Not Logged in");
     }
-);
-
-$("#signupBtn").click(
-    function(){
-        var spinner = '<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />';
-        $('#signUpBodyFields').hide();
-        $('#loadingSignUp').show().append(spinner);
-    }
-);
-
+});

@@ -4,19 +4,20 @@ import ReactDrawer from 'react-drawer';
 
 
 export default class Authentication extends React.Component {
-	 constructor() {
-    super();
-    this.state = {
-      open: false,
-      position: 'left',
-      noOverlay: false,     
-    };
-    this.toggleDrawer = this.toggleDrawer.bind(this);
-    this.closeDrawer = this.closeDrawer.bind(this);
-    this.onDrawerClose = this.onDrawerClose.bind(this);
-    this.setPosition = this.setPosition.bind(this);
-    this.setNoOverlay = this.setNoOverlay.bind(this);
-  }
+	constructor() {
+	    super();
+	    this.state = {
+	      open: false,
+	      position: 'left',
+	      noOverlay: false,     
+	    };
+	    this.toggleDrawer = this.toggleDrawer.bind(this);
+	    this.closeDrawer = this.closeDrawer.bind(this);
+	    this.onDrawerClose = this.onDrawerClose.bind(this);
+	    this.setPosition = this.setPosition.bind(this);
+	    this.setNoOverlay = this.setNoOverlay.bind(this);
+	  }
+
   setPosition(e) {
     this.setState({position: e.target.value});
   }
@@ -32,6 +33,15 @@ export default class Authentication extends React.Component {
   onDrawerClose() {
     this.setState({open: false});
   }
+  signOut() {
+      firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+          window.openAppRoute("/");
+      }, function(error) {
+          // An error happened.
+          alert(error.message);
+      });
+    }
   render() {
     return (
     	<div>
@@ -48,7 +58,7 @@ export default class Authentication extends React.Component {
 			   <div className ="navbar-helpme">
 			      <p className = "navbar-text">
 			        Hi Manus{' '}
-			     	<a href="#" className="btn btn-xs btn-default signOut"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
+			     	<a onClick={this.signOut} className="btn btn-xs btn-default"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
 			     </p>
 			   </div>		   
 			</nav>

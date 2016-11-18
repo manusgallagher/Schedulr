@@ -4,6 +4,10 @@ import { Router, Route, Link, browserHistory } from 'react-router'
 
 
 export default React.createClass({
+  signUp: function() {
+       $('#signUpBodyFields').hide();
+       $('#loadingSignUp').show().append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+    },
   render() {
     return (
      	<div>
@@ -19,7 +23,7 @@ export default React.createClass({
 	              <input type="password" className="form-control" id="confpsw" placeholder="Confirm password" />
 	            </div>
 	            <br />
-	            <button type="submit" id="signupBtn" className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Create</button>
+	            <button type="submit" onClick={this.signUp} className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Create</button>
 	          </div>
 	          <div id="loadingSignUp" className="modal-body LoginModal"></div>
 	          <div className="modal-footer">

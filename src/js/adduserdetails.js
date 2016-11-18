@@ -3,6 +3,15 @@ import ReactDOM from 'react-dom';
 
 
 export default React.createClass({
+  signOut: function() {
+      firebase.auth().signOut().then(function() {
+          // Sign-out successful.
+          window.openAppRoute("/");
+      }, function(error) {
+          // An error happened.
+          alert(error.message);
+      });
+    },
   render() {
     return (
       <div>
@@ -104,7 +113,7 @@ export default React.createClass({
             <button id="AddDetailsBtn" className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Save Details</button>
           </div>
           <div className="modal-footer">
-            <p><a className="signoutlink"><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>
+            <p><a onClick={this.signOut}><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>
           </div>
       </div>
     );
