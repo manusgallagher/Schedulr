@@ -114,7 +114,7 @@ export default React.createClass({
 	          Created: now
 	      	});
 
-	      	window.openAppRoute("/home")
+	      	window.openAppRoute("/home?id="+UID+"?company="+generatedId)
 		});
 	},
 

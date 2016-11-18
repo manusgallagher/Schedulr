@@ -77,13 +77,13 @@ firebase.auth().onAuthStateChanged(function(user) {
               var newUrl =encodeURI("/adduserdetails?id="+user.uid+"&user="+user.email);
               window.openAppRoute(newUrl);
             }else{
-              console.log("You Don't Need to Add User Details...");
+              /*You Don't Need to Add User Details...*/
               if(snap.val().EmployeeOf || snap.val().EmployerOf){
-                console.log("Go Home");
-                var newUrl =encodeURI("/home?id="+user.uid);
+                var companyid = snap.val().EmployerOf.UniqueID;
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
                 window.openAppRoute(newUrl);
               }else{
-                console.log("Create a company / Join a company");
+                /*Create a company / Join a company*/
                 var newUrl =encodeURI("/companyregistration?id="+user.uid);
                 window.openAppRoute(newUrl);
               }

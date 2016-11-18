@@ -42,6 +42,17 @@ export default class Authentication extends React.Component {
           alert(error.message);
       });
     }
+    param(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
   render() {
     return (
     	<div>
@@ -55,12 +66,11 @@ export default class Authentication extends React.Component {
 		            {<i className ="fa fa-bars"></i>}
 		          </button><img className ="navBarLogo" src="img/logo.png" alt="logo" />
 			   </div>		   
-			   <div className ="navbar-helpme">
-			      <p className = "navbar-text">
-			        Hi Manus{' '}
-			     	<a onClick={this.signOut} className="btn btn-xs btn-default"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
-			     </p>
-			   </div>		   
+				<div className ="navbar-helpme">
+					<div className = "navbar-text">
+						<a onClick={this.signOut} className="btn btn-xs btn-default"><span className="glyphicon glyphicon-log-out signOutBtn"></span> Sign Out</a>
+					</div>
+				</div>		   
 			</nav>
 			<div>
 		        <div style={{margin: 200}}>
