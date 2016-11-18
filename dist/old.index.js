@@ -90,26 +90,7 @@ $("#loginBtn").click(
 
 $("#AddDetailsBtn").click(
 	function(){
-		var name 		= $("#AddDetailsName").val();
-		var surname 	= $("#AddDetailsSurname").val();
-		var address		= $("#AddDetailsAddressL1").val()+", "+$("#AddDetailsAddressL2").val()+", "+$("#AddDetailsAddressL3").val()+", "+$("#AddDetailsCounty").val();
-		var dob 		= $("#AddDetailsDOB").val();
-		var phoneNumber = $("#AddDetailsPhone").val();
-
-		firebase.database().ref('users/' + globalUser.uid).set({
-            Name: name,
-            Surname: surname,
-            DOB: dob,
-            Address: address,
-            Phone: phoneNumber,
-            Email: globalUser.email
-        });
-
-        $('#addDetailsModal').modal("hide");
-        	$('#companyModal').modal({
-			  backdrop: 'static',
-			  keyboard: false
-			});
+		
 
 	}
 );

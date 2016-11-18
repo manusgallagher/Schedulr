@@ -60,13 +60,109 @@
 
 	var _login2 = _interopRequireDefault(_login);
 
+	var _signup = __webpack_require__(228);
+
+	var _signup2 = _interopRequireDefault(_signup);
+
+	var _companyregistration = __webpack_require__(229);
+
+	var _companyregistration2 = _interopRequireDefault(_companyregistration);
+
+	var _adduserdetails = __webpack_require__(230);
+
+	var _adduserdetails2 = _interopRequireDefault(_adduserdetails);
+
+	var _navigation = __webpack_require__(231);
+
+	var _navigation2 = _interopRequireDefault(_navigation);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/* 
+	 * ROUTE RENDERING CODE.
+	 */
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  _reactRouter.Router,
 	  { history: _reactRouter.hashHistory },
-	  _react2.default.createElement(_reactRouter.Route, { path: '/', component: _login2.default })
-	), document.getElementById('app'));
+	  _react2.default.createElement(_reactRouter.Route, { path: '/', component: _login2.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/signup', component: _signup2.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/companyregistration', component: _companyregistration2.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/adduserdetails', component: _adduserdetails2.default }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/home' })
+	), document.getElementById("app"));
+
+	_reactDom2.default.render(_react2.default.createElement(
+	  _reactRouter.Router,
+	  { history: _reactRouter.hashHistory },
+	  _react2.default.createElement(_reactRouter.Route, { path: '/' }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/signup' }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/companyregistration' }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/adduserdetails' }),
+	  _react2.default.createElement(_reactRouter.Route, { path: '/home', component: _navigation2.default })
+	), document.getElementById("navigation"));
+
+	var openAppRoute = function openAppRoute(route) {
+	  // Helper function to navigation to a different route programmatically.
+	  _reactRouter.hashHistory.push(route);
+	};
+	window.openAppRoute = openAppRoute;
+
+	/* PAGE SETUP CODE.
+	 * Migrated from Index.js.
+	 */
+
+	$(document).ready(function () {
+	  pageSetup();
+	});
+
+	$(window).on('hashchange', pageSetup);
+
+	function pageSetup() {
+	  var url = window.location.href;
+	  var lastSegment = url.split('/').pop().substring(0, 4);
+
+	  if (lastSegment == "home") {
+	    $('#AuthenticationModal').modal("hide");
+	  } else {
+	    $('#AuthenticationModal').modal({
+	      backdrop: 'static',
+	      keyboard: false
+	    });
+	  }
+	}
+
+	/* AUTHENTICATION CODE.
+	 * Migrated from Index.js.
+	 * Easier Maintained and Guranteed to work.
+	 */
+
+	firebase.auth().onAuthStateChanged(function (user) {
+	  if (user) {
+	    console.log("Logged in");
+
+	    new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + user.uid).once('value', function (snap) {
+	      if (snap.val() == null) {
+	        console.log("You Need to Add User Details...");
+	        var newUrl = encodeURI("/adduserdetails?id=" + user.uid + "&user=" + user.email);
+	        window.openAppRoute(newUrl);
+	      } else {
+	        console.log("You Don't Need to Add User Details...");
+	        if (snap.val().EmployeeOf || snap.val().EmployerOf) {
+	          console.log("Go Home");
+	          var newUrl = encodeURI("/home?id=" + user.uid);
+	          window.openAppRoute(newUrl);
+	        } else {
+	          console.log("Create a company / Join a company");
+	          var newUrl = encodeURI("/companyregistration?id=" + user.uid);
+	          window.openAppRoute(newUrl);
+	        }
+	      }
+	    });
+	  } else {
+	    console.log("Not Logged in");
+	  }
+	});
 
 /***/ },
 /* 1 */
@@ -26346,6 +26442,10 @@
 
 	'use strict';
 
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -26358,107 +26458,1670 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Login = _react2.default.createClass({
-	  displayName: 'Login',
+	exports.default = _react2.default.createClass({
+	  displayName: 'login',
+
+	  logIn: function logIn() {
+	    var email = $("#loginemail").val();
+	    var pswd = $("#loginpswd").val();
+
+	    firebase.auth().signInWithEmailAndPassword(email, pswd).catch(function (error) {
+	      $("#loginError").show().text(error.message);
+	      $("#loginBodyFields").show();
+	      $("#loadingLogin").hide();
+	    });
+
+	    $("#loginBodyFields").hide();
+	    $('#loadingLogin').append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+	  },
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
-	      { className: 'login-container' },
+	      null,
 	      _react2.default.createElement(
 	        'div',
-	        { className: 'modal fade', id: 'loginModal', role: 'dialog' },
+	        { id: 'loginBodyFields', className: 'modal-body LoginModal' },
+	        _react2.default.createElement('p', { id: 'loginError' }),
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'modal-dialog' },
+	          { className: 'form-group LoginInput' },
 	          _react2.default.createElement(
-	            'div',
-	            { className: 'modal-content' },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'modal-header' },
-	              _react2.default.createElement('img', { className: 'ModalHeader', src: 'img/logo.png', alt: 'logo' })
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { id: 'loginBodyFields', className: 'modal-body LoginModal' },
-	              _react2.default.createElement('p', { id: 'loginError' }),
-	              _react2.default.createElement(
-	                'div',
-	                { className: 'form-group LoginInput' },
-	                _react2.default.createElement(
-	                  'label',
-	                  { htmlFor: 'usrname' },
-	                  _react2.default.createElement('span', { className: 'glyphicon glyphicon-user' }),
-	                  'Username'
-	                ),
-	                _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'loginemail', placeholder: 'Enter email' })
-	              ),
-	              _react2.default.createElement(
-	                'div',
-	                { className: 'form-group LoginInput' },
-	                _react2.default.createElement(
-	                  'label',
-	                  { htmlFor: 'psw' },
-	                  _react2.default.createElement('span', { className: 'glyphicon glyphicon-eye-open' }),
-	                  ' Password'
-	                ),
-	                _react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'loginpswd', placeholder: 'Enter password' })
-	              ),
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement(
-	                'button',
-	                { id: 'loginBtn', className: 'btn btn-default btn-success' },
-	                _react2.default.createElement('span', { className: 'glyphicon glyphicon-off' }),
-	                ' Login'
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { id: 'loadingLogin', className: 'modal-body LoginModal' },
-	              _react2.default.createElement('br', null),
-	              _react2.default.createElement('i', { className: 'fa fa-5x fa-spinner fa-spin' }),
-	              _react2.default.createElement('br', null)
-	            ),
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'modal-footer' },
-	              _react2.default.createElement(
-	                'p',
-	                null,
-	                'Not a member? ',
-	                _react2.default.createElement(
-	                  'a',
-	                  { id: 'signup-link' },
-	                  'Sign Up'
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'p',
-	                null,
-	                'Forgot ',
-	                _react2.default.createElement(
-	                  'a',
-	                  null,
-	                  'Password?'
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'p',
-	                null,
-	                _react2.default.createElement(
-	                  'a',
-	                  { className: 'signoutlink' },
-	                  _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
-	                  ' Sign Out'
-	                )
-	              )
-	            )
+	            'label',
+	            { htmlFor: 'usrname' },
+	            _react2.default.createElement('span', { className: 'glyphicon glyphicon-user' }),
+	            'User name'
+	          ),
+	          _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'loginemail', placeholder: 'Enter email' })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'form-group LoginInput' },
+	          _react2.default.createElement(
+	            'label',
+	            { htmlFor: 'psw' },
+	            _react2.default.createElement('span', { className: 'glyphicon glyphicon-eye-open' }),
+	            ' Password'
+	          ),
+	          _react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'loginpswd', placeholder: 'Enter password' })
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: this.logIn, className: 'btn btn-default btn-success' },
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-off' }),
+	          ' Login'
+	        )
+	      ),
+	      _react2.default.createElement('div', { id: 'loadingLogin', className: 'modal-body LoginModal' }),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-footer' },
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Not a member? ',
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/signup', id: 'signup-link' },
+	            'Sign Up'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          'Forgot ',
+	          _react2.default.createElement(
+	            'a',
+	            null,
+	            'Password?'
 	          )
 	        )
 	      )
 	    );
 	  }
 	});
+
+/***/ },
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+					value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactRouter = __webpack_require__(172);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+					displayName: 'signup',
+
+					signUp: function signUp() {
+									var email = $("#signupemail").val();
+									var password = $("#signuppsw").val();
+									var confPass = password; //$("#confpsw").val();
+
+									if (confPass != password) {
+													$("#signUpError").show().text("Passwords Don't Match");
+													$("#confpsw").val("");
+									} else if (email == "") {
+													$("#signUpError").show().text("Fill in All Required Fields");
+									} else if (confPass == "" || password == "") {
+													$("#signUpError").show().text("Fill in All Required Fields");
+									} else {
+
+													firebase.auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
+																	$("#signUpError").show().text(error.message);
+																	$("#signUpBodyFields").show();
+																	$("#loadingSignUp").hide();
+													});
+									}
+
+									$('#signUpBodyFields').hide();
+									$('#loadingSignUp').show().append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+					},
+					render: function render() {
+									return _react2.default.createElement(
+													'div',
+													null,
+													_react2.default.createElement(
+																	'div',
+																	{ id: 'signUpBodyFields', className: 'modal-body LoginModal' },
+																	_react2.default.createElement('p', { id: 'signUpError' }),
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'form-group LoginInput' },
+																					_react2.default.createElement(
+																									'label',
+																									{ htmlFor: 'usrname' },
+																									_react2.default.createElement('span', { className: 'glyphicon glyphicon-user' }),
+																									' Username'
+																					),
+																					_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'signupemail', placeholder: 'Enter email' })
+																	),
+																	_react2.default.createElement(
+																					'div',
+																					{ className: 'form-group LoginInput' },
+																					_react2.default.createElement(
+																									'label',
+																									{ htmlFor: 'psw' },
+																									_react2.default.createElement('span', { className: 'glyphicon glyphicon-eye-open' }),
+																									' Password'
+																					),
+																					_react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'signuppsw', placeholder: 'Enter password' }),
+																					_react2.default.createElement('br', null),
+																					_react2.default.createElement('input', { type: 'password', className: 'form-control', id: 'confpsw', placeholder: 'Confirm password' })
+																	),
+																	_react2.default.createElement('br', null),
+																	_react2.default.createElement(
+																					'button',
+																					{ type: 'submit', onClick: this.signUp, className: 'btn btn-default btn-success' },
+																					_react2.default.createElement('span', { className: 'glyphicon glyphicon-off' }),
+																					' Create'
+																	)
+													),
+													_react2.default.createElement('div', { id: 'loadingSignUp', className: 'modal-body LoginModal' }),
+													_react2.default.createElement(
+																	'div',
+																	{ className: 'modal-footer' },
+																	_react2.default.createElement(
+																					'p',
+																					null,
+																					'Have an Account? ',
+																					_react2.default.createElement(
+																									_reactRouter.Link,
+																									{ to: '/', id: 'login-link' },
+																									'Log In'
+																					)
+																	)
+													)
+									);
+					}
+	});
+
+/***/ },
+/* 229 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+		displayName: 'companyregistration',
+		componentDidMount: function componentDidMount() {
+			$('#joinACompany').hide();
+			$('#createACompany').hide();
+		},
+
+		param: function param(name, url) {
+			if (!url) {
+				url = window.location.href;
+			}
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			    results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		},
+		makeid: function makeid() {
+			var text = "";
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+			for (var i = 0; i < 7; i++) {
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+			}
+
+			return text;
+		},
+		signOut: function signOut() {
+			firebase.auth().signOut().then(function () {
+				// Sign-out successful.
+				window.openAppRoute("/");
+			}, function (error) {
+				// An error happened.
+				alert(error.message);
+			});
+		},
+		joinCompany: function joinCompany() {
+			console.log("join");
+			$('#companyChoice').hide();
+			$('#joinACompany').show();
+		},
+		createCompany: function createCompany() {
+			console.log("create");
+			$('#companyChoice').hide();
+			$('#createACompany').show();
+		},
+		submitID: function submitID() {
+
+			var enteredID = $("#companyID").val();
+			var UID = this.param('id');
+			if (enteredID.length > 0) {
+				new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + enteredID).once('value', function (snap) {
+					if (snap.val() != null) {
+						$("#idError").hide();
+
+						new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function (snapshot) {
+							var now = new Date().toUTCString();
+
+							/* Posting into the 'companies' tree
+	       * the New Employee.
+	       */
+							firebase.database().ref('companies/' + enteredID + '/Employees/' + UID).set({
+								Name: snapshot.val().Name + " " + snapshot.val().Surname,
+								Joined: now
+							});
+							/* Posting into the 'users' tree
+	       * the New Employment.
+	       */
+							firebase.database().ref('users/' + UID + '/EmployeeOf/' + enteredID).set({
+								Name: snap.val().Name,
+								Joined: now
+							});
+						});
+					} else {
+						$("#idError").empty().append("<b>Error:</b> <br/>" + enteredID + " is not a valid CompanyID.");
+					}
+				});
+			}
+		},
+
+		saveCompany: function saveCompany() {
+			var name = $('#CompanyName').val();
+			var email = $('#CreateCompanyEmail').val();
+			var number = $('#CreateCompanyNumber').val();
+			var type = $('#CreateCompanyType').val();
+			var address = $('#CreateCompanyAddressL1').val() + ", " + $('#CreateCompanyAddressL2').val() + ", " + $('#CreateCompanyAddressL3').val() + ", " + $('#CreateCompanyCounty').val() + ".";
+
+			var now = new Date().toUTCString();
+			var UID = this.param('id');
+			var generatedId = this.makeid();
+
+			new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function (snap) {
+				firebase.database().ref('companies/' + generatedId).set({
+					Name: name,
+					Email: email,
+					Number: number,
+					Type: type,
+					Address: address
+				});
+
+				firebase.database().ref('companies/' + generatedId + '/Employer').set({
+					Name: snap.val().Name + " " + snap.val().Surname,
+					UID: UID,
+					Created: now
+				});
+
+				firebase.database().ref('users/' + UID + '/EmployerOf').set({
+					Name: name,
+					UniqueID: generatedId,
+					Created: now
+				});
+
+				window.openAppRoute("/home");
+			});
+		},
+
+		render: function render() {
+			return _react2.default.createElement(
+				'div',
+				null,
+				_react2.default.createElement(
+					'div',
+					{ className: 'modal-body LoginModal' },
+					_react2.default.createElement(
+						'div',
+						{ id: 'companyChoice' },
+						_react2.default.createElement(
+							'a',
+							{ onClick: this.createCompany, className: 'btn btn-lg btn-primary createCompany' },
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-plus' }),
+							' Create Company'
+						),
+						' ',
+						_react2.default.createElement(
+							'a',
+							{ onClick: this.joinCompany, className: 'btn btn-lg btn-primary joinCompany' },
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-cloud' }),
+							' Join Company'
+						)
+					),
+					_react2.default.createElement(
+						'div',
+						{ id: 'joinACompany' },
+						_react2.default.createElement('p', { id: 'idError' }),
+						_react2.default.createElement('input', { id: 'companyID', type: 'text', className: 'form-control', placeholder: 'Unique ID...' }),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement(
+							'button',
+							{ onClick: this.submitID, className: 'btn btn-default btn-success' },
+							_react2.default.createElement('i', { className: 'fa fa-paper-plane-o' }),
+							' Submit'
+						)
+					),
+					_react2.default.createElement(
+						'div',
+						{ id: 'createACompany' },
+						_react2.default.createElement(
+							'table',
+							null,
+							_react2.default.createElement(
+								'tbody',
+								null,
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Company Name:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CompanyName', placeholder: 'Company Name...' })
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Address Line 1:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CreateCompanyAddressL1', placeholder: 'Address Line 1...' })
+										)
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Email:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CreateCompanyEmail', placeholder: 'Email...' })
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Address Line 2:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CreateCompanyAddressL2', placeholder: 'Address Line 2...' })
+										)
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Phone Number:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CreateCompanyNumber', placeholder: 'Phone Number...' })
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'Address Line 3:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'CreateCompanyAddressL3', placeholder: 'Address Line 3...' })
+										)
+									)
+								),
+								_react2.default.createElement(
+									'tr',
+									null,
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*Type:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement(
+												'select',
+												{ name: 'county', id: 'CreateCompanyType', className: 'form-control' },
+												_react2.default.createElement(
+													'option',
+													null,
+													'-- Select a Type --'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'pub' },
+													'Pub'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'restaurant' },
+													'Restaurant'
+												)
+											)
+										)
+									),
+									_react2.default.createElement(
+										'td',
+										{ className: 'CreateCompanyHeader' },
+										'*County:'
+									),
+									_react2.default.createElement(
+										'td',
+										null,
+										_react2.default.createElement(
+											'div',
+											{ className: 'form-group CreateCompanyInput' },
+											_react2.default.createElement(
+												'select',
+												{ name: 'county', id: 'CreateCompanyCounty', className: 'form-control' },
+												_react2.default.createElement(
+													'option',
+													null,
+													'-- Select a County --'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Antrim' },
+													'Antrim'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Armagh' },
+													'Armagh'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Carlow' },
+													'Carlow'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Cavan' },
+													'Cavan'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Clare' },
+													'Clare'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Cork' },
+													'Cork'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Derry' },
+													'Derry'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Donegal' },
+													'Donegal'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Down' },
+													'Down'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Dublin' },
+													'Dublin'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Fermanagh' },
+													'Fermanagh'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Galway' },
+													'Galway'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Kerry' },
+													'Kerry'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Kildare' },
+													'Kildare'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Kilkenny' },
+													'Kilkenny'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Laois' },
+													'Laois'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Leitrim' },
+													'Leitrim'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Limerick' },
+													'Limerick'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Longford' },
+													'Longford'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Louth' },
+													'Louth'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Mayo' },
+													'Mayo'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Meath' },
+													'Meath'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Monaghan' },
+													'Monaghan'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Offaly' },
+													'Offaly'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Roscommon' },
+													'Roscommon'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Sligo' },
+													'Sligo'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Tipperary' },
+													'Tipperary'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Tyrone' },
+													'Tyrone'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Waterford' },
+													'Waterford'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Westmeath' },
+													'Westmeath'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Wexford' },
+													'Wexford'
+												),
+												_react2.default.createElement(
+													'option',
+													{ value: 'Wicklow' },
+													'Wicklow'
+												)
+											)
+										)
+									)
+								)
+							)
+						),
+						_react2.default.createElement('br', null),
+						_react2.default.createElement(
+							'button',
+							{ onClick: this.saveCompany, className: 'btn btn-default btn-success' },
+							_react2.default.createElement('i', { className: 'fa fa-building-o', 'aria-hidden': 'true' }),
+							' Create Company'
+						)
+					)
+				),
+				_react2.default.createElement(
+					'div',
+					{ className: 'modal-footer' },
+					_react2.default.createElement(
+						'p',
+						null,
+						_react2.default.createElement(
+							'a',
+							{ onClick: this.signOut },
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
+							' Sign Out'
+						)
+					)
+				)
+			);
+		}
+	});
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _react2.default.createClass({
+	  displayName: 'adduserdetails',
+
+	  param: function param(name, url) {
+	    if (!url) {
+	      url = window.location.href;
+	    }
+	    name = name.replace(/[\[\]]/g, "\\$&");
+	    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	        results = regex.exec(url);
+	    if (!results) return null;
+	    if (!results[2]) return '';
+	    return decodeURIComponent(results[2].replace(/\+/g, " "));
+	  },
+	  signOut: function signOut() {
+	    firebase.auth().signOut().then(function () {
+	      // Sign-out successful.
+	      window.openAppRoute("/");
+	    }, function (error) {
+	      // An error happened.
+	      alert(error.message);
+	    });
+	  },
+
+	  addDetails: function addDetails() {
+	    var userID = this.param('id');
+	    var userEmail = this.param('user');
+
+	    var name = $("#AddDetailsName").val();
+	    var surname = $("#AddDetailsSurname").val();
+	    var address = $("#AddDetailsAddressL1").val() + ", " + $("#AddDetailsAddressL2").val() + ", " + $("#AddDetailsAddressL3").val() + ", " + $("#AddDetailsCounty").val();
+	    var dob = $("#AddDetailsDOB").val();
+	    var phoneNumber = $("#AddDetailsPhone").val();
+
+	    firebase.database().ref('users/' + userID).set({
+	      Name: name,
+	      Surname: surname,
+	      DOB: dob,
+	      Address: address,
+	      Phone: phoneNumber,
+	      Email: userEmail
+	    });
+
+	    $("#AddUserDetails").hide();
+	    $('#loadingSave').append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+	    var newUrl = encodeURI("/companyregistration?user=" + user.uid);
+	    window.openAppRoute(newUrl);
+	  },
+
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'div',
+	        { id: 'AddUserDetails', className: 'modal-body LoginModal' },
+	        _react2.default.createElement('p', { id: 'AdditionalInputError' }),
+	        _react2.default.createElement(
+	          'table',
+	          null,
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*First Name:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsName', placeholder: 'First Name...' })
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*Address Line 1:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsAddressL1', placeholder: 'Address Line 1...' })
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*Surname:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsSurname', placeholder: 'Surname...' })
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*Address Line 2:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsAddressL2', placeholder: 'Address Line 2...' })
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*DOB:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'date', className: 'form-control', id: 'AddDetailsDOB' })
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                'Address Line 3:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsAddressL3', placeholder: 'Address Line 3...' })
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*Phone Number:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement('input', { type: 'text', className: 'form-control', id: 'AddDetailsPhone', placeholder: 'Phone Number...' })
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                { className: 'AdditionalDetailsHeader' },
+	                '*County:'
+	              ),
+	              _react2.default.createElement(
+	                'td',
+	                null,
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'form-group AdditonalInfoInput' },
+	                  _react2.default.createElement(
+	                    'select',
+	                    { name: 'county', id: 'AddDetailsCounty', className: 'form-control', placeholder: 'County...' },
+	                    _react2.default.createElement(
+	                      'option',
+	                      null,
+	                      '-- Select a County --'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Antrim' },
+	                      'Antrim'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Armagh' },
+	                      'Armagh'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Carlow' },
+	                      'Carlow'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Cavan' },
+	                      'Cavan'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Clare' },
+	                      'Clare'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Cork' },
+	                      'Cork'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Derry' },
+	                      'Derry'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Donegal' },
+	                      'Donegal'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Down' },
+	                      'Down'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Dublin' },
+	                      'Dublin'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Fermanagh' },
+	                      'Fermanagh'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Galway' },
+	                      'Galway'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Kerry' },
+	                      'Kerry'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Kildare' },
+	                      'Kildare'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Kilkenny' },
+	                      'Kilkenny'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Laois' },
+	                      'Laois'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Leitrim' },
+	                      'Leitrim'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Limerick' },
+	                      'Limerick'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Longford' },
+	                      'Longford'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Louth' },
+	                      'Louth'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Mayo' },
+	                      'Mayo'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Meath' },
+	                      'Meath'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Monaghan' },
+	                      'Monaghan'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Offaly' },
+	                      'Offaly'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Roscommon' },
+	                      'Roscommon'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Sligo' },
+	                      'Sligo'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Tipperary' },
+	                      'Tipperary'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Tyrone' },
+	                      'Tyrone'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Waterford' },
+	                      'Waterford'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Westmeath' },
+	                      'Westmeath'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Wexford' },
+	                      'Wexford'
+	                    ),
+	                    _react2.default.createElement(
+	                      'option',
+	                      { value: 'Wicklow' },
+	                      'Wicklow'
+	                    )
+	                  )
+	                )
+	              )
+	            )
+	          )
+	        ),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: this.addDetails, className: 'btn btn-default btn-success' },
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-off' }),
+	          ' Save Details'
+	        )
+	      ),
+	      _react2.default.createElement('div', { id: 'loadingSave', className: 'modal-body LoginModal' }),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'modal-footer' },
+	        _react2.default.createElement(
+	          'p',
+	          null,
+	          _react2.default.createElement(
+	            'a',
+	            { onClick: this.signOut },
+	            _react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out' }),
+	            ' Sign Out'
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+			value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(34);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _reactDrawer = __webpack_require__(232);
+
+	var _reactDrawer2 = _interopRequireDefault(_reactDrawer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Authentication = function (_React$Component) {
+			_inherits(Authentication, _React$Component);
+
+			function Authentication() {
+					_classCallCheck(this, Authentication);
+
+					var _this = _possibleConstructorReturn(this, (Authentication.__proto__ || Object.getPrototypeOf(Authentication)).call(this));
+
+					_this.state = {
+							open: false,
+							position: 'left',
+							noOverlay: false
+					};
+					_this.toggleDrawer = _this.toggleDrawer.bind(_this);
+					_this.closeDrawer = _this.closeDrawer.bind(_this);
+					_this.onDrawerClose = _this.onDrawerClose.bind(_this);
+					_this.setPosition = _this.setPosition.bind(_this);
+					_this.setNoOverlay = _this.setNoOverlay.bind(_this);
+					return _this;
+			}
+
+			_createClass(Authentication, [{
+					key: 'setPosition',
+					value: function setPosition(e) {
+							this.setState({ position: e.target.value });
+					}
+			}, {
+					key: 'setNoOverlay',
+					value: function setNoOverlay(e) {
+							this.setState({ noOverlay: e.target.checked });
+					}
+			}, {
+					key: 'toggleDrawer',
+					value: function toggleDrawer() {
+							this.setState({ open: !this.state.open });
+					}
+			}, {
+					key: 'closeDrawer',
+					value: function closeDrawer() {
+							this.setState({ open: false });
+					}
+			}, {
+					key: 'onDrawerClose',
+					value: function onDrawerClose() {
+							this.setState({ open: false });
+					}
+			}, {
+					key: 'signOut',
+					value: function signOut() {
+							firebase.auth().signOut().then(function () {
+									// Sign-out successful.
+									window.openAppRoute("/");
+							}, function (error) {
+									// An error happened.
+									alert(error.message);
+							});
+					}
+			}, {
+					key: 'render',
+					value: function render() {
+							return _react2.default.createElement(
+									'div',
+									null,
+									_react2.default.createElement(
+											'nav',
+											{ className: 'navbar navbar-custom', role: 'navigation' },
+											_react2.default.createElement(
+													'div',
+													{ className: 'navbar-header navBarLogoPosition' },
+													_react2.default.createElement(
+															'button',
+															{
+																	onClick: this.toggleDrawer,
+																	disabled: this.state.open && !this.state.noOverlay,
+																	className: 'drawerBtn'
+															},
+															_react2.default.createElement('i', { className: 'fa fa-bars' })
+													),
+													_react2.default.createElement('img', { className: 'navBarLogo', src: 'img/logo.png', alt: 'logo' })
+											),
+											_react2.default.createElement(
+													'div',
+													{ className: 'navbar-helpme' },
+													_react2.default.createElement(
+															'p',
+															{ className: 'navbar-text' },
+															'Hi Manus',
+															' ',
+															_react2.default.createElement(
+																	'a',
+																	{ onClick: this.signOut, className: 'btn btn-xs btn-default' },
+																	_react2.default.createElement('span', { className: 'glyphicon glyphicon-log-out signOutBtn' }),
+																	' Sign Out'
+															)
+													)
+											)
+									),
+									_react2.default.createElement(
+											'div',
+											null,
+											_react2.default.createElement('div', { style: { margin: 200 } }),
+											_react2.default.createElement(
+													_reactDrawer2.default,
+													{
+															open: this.state.open,
+															position: this.state.position,
+															onClose: this.onDrawerClose,
+															noOverlay: this.state.noOverlay,
+															className: 'NavBarThing' },
+													_react2.default.createElement('i', { onClick: this.closeDrawer, className: 'icono-cross' }),
+													_react2.default.createElement(
+															'div',
+															{ className: 'nav-drawer' },
+															_react2.default.createElement('img', { className: 'navDrawerLogo', src: 'img/logo.png', alt: 'logo' }),
+															_react2.default.createElement('br', null),
+															_react2.default.createElement(
+																	'div',
+																	{ className: 'nav-drawer-links' },
+																	_react2.default.createElement(
+																			'p',
+																			null,
+																			_react2.default.createElement(
+																					'a',
+																					{ className: 'nav-drawer-item active' },
+																					_react2.default.createElement('i', { className: 'fa fa-home' }),
+																					' Home'
+																			)
+																	),
+																	_react2.default.createElement(
+																			'p',
+																			null,
+																			_react2.default.createElement(
+																					'a',
+																					{ className: 'nav-drawer-item' },
+																					_react2.default.createElement('i', { className: 'fa fa-calendar' }),
+																					' Rota'
+																			)
+																	),
+																	_react2.default.createElement(
+																			'p',
+																			null,
+																			_react2.default.createElement(
+																					'a',
+																					{ className: 'nav-drawer-item' },
+																					_react2.default.createElement('i', { className: 'fa fa-pencil' }),
+																					' Holidays'
+																			)
+																	),
+																	_react2.default.createElement(
+																			'p',
+																			null,
+																			_react2.default.createElement(
+																					'a',
+																					{ id: 'profileLink', className: 'nav-drawer-item' },
+																					_react2.default.createElement('i', { className: 'fa fa-user' }),
+																					' Profile'
+																			)
+																	)
+															)
+													)
+											)
+									)
+							);
+					}
+			}]);
+
+			return Authentication;
+	}(_react2.default.Component);
+
+	exports.default = Authentication;
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory(__webpack_require__(1));
+		else if(typeof define === 'function' && define.amd)
+			define(["react"], factory);
+		else if(typeof exports === 'object')
+			exports["ReactDrawer"] = factory(require("react"));
+		else
+			root["ReactDrawer"] = factory(root["react"]);
+	})(this, function(__WEBPACK_EXTERNAL_MODULE_3__) {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+
+
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		Object.defineProperty(exports, "__esModule", {
+		  value: true
+		});
+
+		var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+		var _ReactDrawer = __webpack_require__(1);
+
+		var _ReactDrawer2 = _interopRequireDefault(_ReactDrawer);
+
+		var _animate = __webpack_require__(2);
+
+		var _animate2 = _interopRequireDefault(_animate);
+
+		var _react = __webpack_require__(3);
+
+		var _react2 = _interopRequireDefault(_react);
+
+		var _classnames = __webpack_require__(4);
+
+		var _classnames2 = _interopRequireDefault(_classnames);
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+		function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+		function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+		function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*!
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * ReactDrawer
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Licensed under the MIT license
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Copyright (c) 2016 Tony Li
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+		var ReactDrawer = function (_React$Component) {
+		  _inherits(ReactDrawer, _React$Component);
+
+		  function ReactDrawer(props) {
+		    _classCallCheck(this, ReactDrawer);
+
+		    var _this = _possibleConstructorReturn(this, (ReactDrawer.__proto__ || Object.getPrototypeOf(ReactDrawer)).call(this, props));
+
+		    _this.openDrawer = _this.openDrawer.bind(_this);
+		    _this.closeDrawer = _this.closeDrawer.bind(_this);
+		    _this.onAnimationEnded = _this.onAnimationEnded.bind(_this);
+		    return _this;
+		  }
+
+		  _createClass(ReactDrawer, [{
+		    key: 'onAnimationEnded',
+		    value: function onAnimationEnded() {
+		      if (!this.state.open) {
+		        this.setState({
+		          hiddenOverlay: true,
+		          hiddenDrawer: true
+		        });
+		      }
+		    }
+		  }, {
+		    key: 'componentWillMount',
+		    value: function componentWillMount() {
+		      this.state = {
+		        open: this.props.open,
+		        hiddenOverlay: true,
+		        hiddenDrawer: true
+		      };
+		    }
+		  }, {
+		    key: 'closeDrawer',
+		    value: function closeDrawer() {
+		      this.setState({
+		        open: false
+		      });
+		      if (this.props.onClose) {
+		        this.props.onClose();
+		      }
+		    }
+		  }, {
+		    key: 'openDrawer',
+		    value: function openDrawer() {
+		      this.setState({
+		        hiddenOverlay: false,
+		        hiddenDrawer: false,
+		        open: true
+		      });
+		    }
+		  }, {
+		    key: 'componentWillReceiveProps',
+		    value: function componentWillReceiveProps(nextProps) {
+		      if (nextProps.open != this.state.open) {
+		        nextProps.open ? this.openDrawer() : this.closeDrawer();
+		      }
+		    }
+		  }, {
+		    key: 'componentDidMount',
+		    value: function componentDidMount() {
+		      this.drawer.addEventListener('webkitAnimationEnd', this.onAnimationEnded);
+		    }
+		  }, {
+		    key: 'componentWillUnmount',
+		    value: function componentWillUnmount() {
+		      this.drawer.removeEventListener('webkitAnimationEnd', this.onAnimationEnded);
+		    }
+		  }, {
+		    key: 'getOverlayClassName',
+		    value: function getOverlayClassName(theme, animate) {
+		      var _classNames;
+
+		      return (0, _classnames2.default)('react-drawer-overlay', theme.overlay, animate.animated, (_classNames = {}, _defineProperty(_classNames, '' + animate.fadeIn, this.state.open), _defineProperty(_classNames, '' + animate.fadeOut, !this.state.open), _defineProperty(_classNames, '' + theme.hidden, this.state.hiddenOverlay), _classNames));
+		    }
+		  }, {
+		    key: 'getDrawerClassName',
+		    value: function getDrawerClassName(theme, animate) {
+		      var position = this.props.position || 'right';
+		      var themeAttr = 'drawer-' + position;
+		      var drawerTheme = theme[themeAttr];
+		      var direction = void 0,
+		          start = void 0;
+		      if (this.state.open) {
+		        direction = 'In';
+		        switch (position) {
+		          case 'top':
+		            start = 'Down';break;
+		          case 'bottom':
+		            start = 'Up';break;
+		          case 'left':
+		            start = 'Left';break;
+		          case 'right':
+		            start = 'Right';break;
+		        }
+		      } else {
+		        direction = 'Out';
+		        switch (position) {
+		          case 'top':
+		            start = 'Up';break;
+		          case 'bottom':
+		            start = 'Down';break;
+		          case 'left':
+		            start = 'Left';break;
+		          case 'right':
+		            start = 'Right';break;
+		        }
+		      }
+		      var fade = animate['fade' + direction + start];
+		      return (0, _classnames2.default)('react-drawer-drawer', theme.drawer, drawerTheme, animate.animated, fade, _defineProperty({}, '' + theme.hidden, this.state.hiddenDrawer));
+		    }
+		  }, {
+		    key: 'render',
+		    value: function render() {
+		      var _this2 = this;
+
+		      var overlayClass = this.getOverlayClassName(_ReactDrawer2.default, _animate2.default);
+		      var drawerClass = this.getDrawerClassName(_ReactDrawer2.default, _animate2.default);
+
+		      return _react2.default.createElement(
+		        'div',
+		        null,
+		        !this.props.noOverlay ? _react2.default.createElement('div', {
+		          ref: function ref(c) {
+		            return _this2.overlay = c;
+		          },
+		          className: overlayClass,
+		          onClick: this.closeDrawer }) : null,
+		        _react2.default.createElement(
+		          'div',
+		          {
+		            className: drawerClass,
+		            ref: function ref(c) {
+		              return _this2.drawer = c;
+		            } },
+		          this.props.children
+		        )
+		      );
+		    }
+		  }]);
+
+		  return ReactDrawer;
+		}(_react2.default.Component);
+
+		ReactDrawer.propTypes = {
+		  open: _react2.default.PropTypes.bool.isRequired,
+		  onClose: _react2.default.PropTypes.func,
+		  position: _react2.default.PropTypes.oneOf(['top', 'bottom', 'right', 'left']),
+		  noOverlay: _react2.default.PropTypes.bool
+		};
+
+		// ReactDrawer.defaultProps = {
+		//   open: false, // default status of the drawer
+		//   transform: 0 // 0: inital close, 1: from open to close, 2: from close to open
+		// };
+
+		exports.default = ReactDrawer;
+
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports) {
+
+		// removed by extract-text-webpack-plugin
+		module.exports = {"drawer":"ReactDrawer__drawer___2r5VH","drawer-top":"ReactDrawer__drawer-top___1dfbB","drawer-bottom":"ReactDrawer__drawer-bottom___2f9G_","drawer-left":"ReactDrawer__drawer-left___2xURN","drawer-right":"ReactDrawer__drawer-right___h_uSC","hidden":"ReactDrawer__hidden___12vbU","overlay":"ReactDrawer__overlay___2QFmC"};
+
+	/***/ },
+	/* 2 */
+	/***/ function(module, exports) {
+
+		// removed by extract-text-webpack-plugin
+		module.exports = {"animated":"animate__animated___2O131","infinite":"animate__infinite___3ditF","hinge":"animate__hinge___1gC1I","flipOutX":"animate__flipOutX___14JIh","flipOutY":"animate__flipOutY___3-fcT","bounceIn":"animate__bounceIn___A5DKu","bounceOut":"animate__bounceOut___1cFbR","bounce":"animate__bounce___2lrL7","flash":"animate__flash___1cEFo","pulse":"animate__pulse___2PvmM","rubberBand":"animate__rubberBand___2EGEd","shake":"animate__shake___2DAZ4","headShake":"animate__headShake___3XmHP","swing":"animate__swing___3C_jC","tada":"animate__tada___Qt5PH","wobble":"animate__wobble___SKKSi","jello":"animate__jello___1vLIG","bounceInDown":"animate__bounceInDown___ZnhIW","bounceInLeft":"animate__bounceInLeft___3RKRN","bounceInRight":"animate__bounceInRight___1fPzt","bounceInUp":"animate__bounceInUp___3be9U","bounceOutDown":"animate__bounceOutDown___2bUPG","bounceOutLeft":"animate__bounceOutLeft___2Q63A","bounceOutRight":"animate__bounceOutRight___360fD","bounceOutUp":"animate__bounceOutUp___3XAFf","fadeIn":"animate__fadeIn___3bQIe","fadeInDown":"animate__fadeInDown___dGqol","fadeInDownBig":"animate__fadeInDownBig___1FQOh","fadeInLeft":"animate__fadeInLeft___2Rcw5","fadeInLeftBig":"animate__fadeInLeftBig___2VDk0","fadeInRight":"animate__fadeInRight___uwTeO","fadeInRightBig":"animate__fadeInRightBig___3Xcl7","fadeInUp":"animate__fadeInUp___2xZln","fadeInUpBig":"animate__fadeInUpBig___zqLD5","fadeOut":"animate__fadeOut___1eBhz","fadeOutDown":"animate__fadeOutDown___2VkMZ","fadeOutDownBig":"animate__fadeOutDownBig___3TYAD","fadeOutLeft":"animate__fadeOutLeft___2jmiI","fadeOutLeftBig":"animate__fadeOutLeftBig___1FJrH","fadeOutRight":"animate__fadeOutRight___hdB_e","fadeOutRightBig":"animate__fadeOutRightBig___2DPtr","fadeOutUp":"animate__fadeOutUp___3e5Sp","fadeOutUpBig":"animate__fadeOutUpBig___1jhuD","flip":"animate__flip___mEy1R","flipInX":"animate__flipInX___3AYWx","flipInY":"animate__flipInY___kBUzo","lightSpeedIn":"animate__lightSpeedIn___23y_G","lightSpeedOut":"animate__lightSpeedOut___c7ISu","rotateIn":"animate__rotateIn___1rIe1","rotateInDownLeft":"animate__rotateInDownLeft___1Yg3C","rotateInDownRight":"animate__rotateInDownRight___23mEq","rotateInUpLeft":"animate__rotateInUpLeft___7696c","rotateInUpRight":"animate__rotateInUpRight___yaDuX","rotateOut":"animate__rotateOut___3wKvg","rotateOutDownLeft":"animate__rotateOutDownLeft___3ULiD","rotateOutDownRight":"animate__rotateOutDownRight___2Ecbu","rotateOutUpLeft":"animate__rotateOutUpLeft___3Bn0k","rotateOutUpRight":"animate__rotateOutUpRight___12d5z","rollIn":"animate__rollIn___qdqqO","rollOut":"animate__rollOut___2jQO8","zoomIn":"animate__zoomIn___3rhkD","zoomInDown":"animate__zoomInDown___JG8EB","zoomInLeft":"animate__zoomInLeft___qAe_q","zoomInRight":"animate__zoomInRight___3tQ-_","zoomInUp":"animate__zoomInUp___1ctD0","zoomOut":"animate__zoomOut___1qWDJ","zoomOutDown":"animate__zoomOutDown___35vfM","zoomOutLeft":"animate__zoomOutLeft___2eFQd","zoomOutRight":"animate__zoomOutRight___1qxrO","zoomOutUp":"animate__zoomOutUp___kSWPE","slideInDown":"animate__slideInDown___35wHN","slideInLeft":"animate__slideInLeft___1ImeA","slideInRight":"animate__slideInRight___3K8gk","slideInUp":"animate__slideInUp___zy0K5","slideOutDown":"animate__slideOutDown___19w6V","slideOutLeft":"animate__slideOutLeft___LIyk1","slideOutRight":"animate__slideOutRight___2xauG","slideOutUp":"animate__slideOutUp___12ncd"};
+
+	/***/ },
+	/* 3 */
+	/***/ function(module, exports) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+	/***/ },
+	/* 4 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+		  Copyright (c) 2016 Jed Watson.
+		  Licensed under the MIT License (MIT), see
+		  http://jedwatson.github.io/classnames
+		*/
+		/* global define */
+
+		(function () {
+			'use strict';
+
+			var hasOwn = {}.hasOwnProperty;
+
+			function classNames () {
+				var classes = [];
+
+				for (var i = 0; i < arguments.length; i++) {
+					var arg = arguments[i];
+					if (!arg) continue;
+
+					var argType = typeof arg;
+
+					if (argType === 'string' || argType === 'number') {
+						classes.push(arg);
+					} else if (Array.isArray(arg)) {
+						classes.push(classNames.apply(null, arg));
+					} else if (argType === 'object') {
+						for (var key in arg) {
+							if (hasOwn.call(arg, key) && arg[key]) {
+								classes.push(key);
+							}
+						}
+					}
+				}
+
+				return classes.join(' ');
+			}
+
+			if (typeof module !== 'undefined' && module.exports) {
+				module.exports = classNames;
+			} else if (true) {
+				// register as 'classnames', consistent with npm package name
+				!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+					return classNames;
+				}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+			} else {
+				window.classNames = classNames;
+			}
+		}());
+
+
+	/***/ }
+	/******/ ])
+	});
+	;
 
 /***/ }
 /******/ ]);

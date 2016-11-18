@@ -50,7 +50,7 @@ $(window).on('hashchange', pageSetup);
 
 function pageSetup(){
     var url = window.location.href;
-    var lastSegment = url.split('/').pop();
+    var lastSegment = url.split('/').pop().substring(0,4);
 
     if (lastSegment == "home"){
         $('#AuthenticationModal').modal("hide");
@@ -66,23 +66,26 @@ function pageSetup(){
  * Migrated from Index.js.
  * Easier Maintained and Guranteed to work.
  */
-var globalUser = "";
+
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
         console.log("Logged in");
-        globalUser = user;
-
+        
         new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + user.uid).once('value', function(snap) {
             if (snap.val() == null) {
-              //--Closing Signup and Login Modals--
               console.log("You Need to Add User Details...");
-              window.openAppRoute("/adduserdetails");
+              var newUrl =encodeURI("/adduserdetails?id="+user.uid+"&user="+user.email);
+              window.openAppRoute(newUrl);
             }else{
               console.log("You Don't Need to Add User Details...");
               if(snap.val().EmployeeOf || snap.val().EmployerOf){
-                 window.openAppRoute("/home");
+                console.log("Go Home");
+                var newUrl =encodeURI("/home?id="+user.uid);
+                window.openAppRoute(newUrl);
               }else{
-                console.log("Whatchu talking bout Willis?");
+                console.log("Create a company / Join a company");
+                var newUrl =encodeURI("/companyregistration?id="+user.uid);
+                window.openAppRoute(newUrl);
               }
             }
         });

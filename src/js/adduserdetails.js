@@ -1,8 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
 export default React.createClass({
+  param: function(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    },
   signOut: function() {
       firebase.auth().signOut().then(function() {
           // Sign-out successful.
@@ -12,10 +22,36 @@ export default React.createClass({
           alert(error.message);
       });
     },
+
+    addDetails: function() {
+      var userID = this.param('id');
+      var userEmail = this.param('user');
+
+      var name    = $("#AddDetailsName").val();
+      var surname   = $("#AddDetailsSurname").val();
+      var address   = $("#AddDetailsAddressL1").val()+", "+$("#AddDetailsAddressL2").val()+", "+$("#AddDetailsAddressL3").val()+", "+$("#AddDetailsCounty").val();
+      var dob     = $("#AddDetailsDOB").val();
+      var phoneNumber = $("#AddDetailsPhone").val();
+
+      firebase.database().ref('users/' + userID).set({
+          Name: name,
+          Surname: surname,
+          DOB: dob,
+          Address: address,
+          Phone: phoneNumber,
+          Email: userEmail
+      });
+
+      $("#AddUserDetails").hide();
+      $('#loadingSave').append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+      var newUrl =encodeURI("/companyregistration?user="+user.uid);
+      window.openAppRoute(newUrl);
+    },
+
   render() {
     return (
       <div>
-		       <div className="modal-body LoginModal">
+		       <div id="AddUserDetails" className="modal-body LoginModal">
             <p id="AdditionalInputError" />
             <table>
               <tbody><tr>
@@ -110,8 +146,9 @@ export default React.createClass({
                 </tr>
               </tbody></table>
             <br />			            
-            <button id="AddDetailsBtn" className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Save Details</button>
+            <button onClick={this.addDetails} className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Save Details</button>
           </div>
+          <div id="loadingSave" className="modal-body LoginModal"></div>
           <div className="modal-footer">
             <p><a onClick={this.signOut}><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>
           </div>

@@ -123,3 +123,18 @@ body {
     bottom: 0;
     margin-bottom: 0.5em;
 }
+
+#joinACompany{
+	width:50%;
+	margin: 0 auto; 
+}
+
+.CreateCompanyInput{
+	width: 88%;
+}
+
+.CreateCompanyHeader{
+	font-size: 75%;
+	text-align: right;
+	font-weight: bold;
+}

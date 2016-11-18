@@ -5,8 +5,28 @@ import { Router, Route, Link, browserHistory } from 'react-router'
 
 export default React.createClass({
   signUp: function() {
-       $('#signUpBodyFields').hide();
-       $('#loadingSignUp').show().append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
+  		var email = $("#signupemail").val();
+        var password = $("#signuppsw").val();
+        var confPass = password; //$("#confpsw").val();
+
+        if (confPass != password) {
+            $("#signUpError").show().text("Passwords Don't Match");
+            $("#confpsw").val("");
+        } else if (email == "") {
+            $("#signUpError").show().text("Fill in All Required Fields");
+        } else if (confPass == "" || password == "") {
+            $("#signUpError").show().text("Fill in All Required Fields");
+        } else {
+
+	        firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+	            $("#signUpError").show().text(error.message);
+	            $("#signUpBodyFields").show();
+	        	$("#loadingSignUp").hide();
+	        });
+	    }
+
+	       $('#signUpBodyFields').hide();
+	       $('#loadingSignUp').show().append('<br /><i class="fa fa-5x fa-spinner fa-spin" /><br />');
     },
   render() {
     return (
