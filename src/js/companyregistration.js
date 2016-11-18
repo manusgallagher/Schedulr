@@ -74,7 +74,8 @@ export default React.createClass({
 				          Name: snap.val().Name,
 				          Joined: now
 				      	});
-					});			
+					});	
+					window.openAppRoute("/home?id="+UID+"?company="+enteredID)
 				}else{
 					$("#idError").empty().append("<b>Error:</b> <br/>"+enteredID+" is not a valid CompanyID.");
 				}				
