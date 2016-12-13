@@ -37,6 +37,7 @@ export default React.createClass({
           <p>Not a member? <Link to='/signup' id="signup-link">Sign Up</Link></p>
           <p>Forgot <a>Password?</a></p>
         </div>
+        
       </div>
     );
   }
