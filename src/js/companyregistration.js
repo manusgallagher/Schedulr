@@ -122,7 +122,16 @@ export default React.createClass({
   render() {
     return (
       <div>
-		<div className="modal-body LoginModal">
+
+      	<div className="modal fade" id="CompanyRegistrationModal" role="dialog"> 
+	        <div className="modal-dialog"> 
+	          {/* Modal content */} 
+	          <div className="modal-content">
+	            <div className="modal-header">
+	              <img className="ModalHeader" src="img/logo.png" alt="logo" />
+	            </div>
+	            
+	            <div className="modal-body LoginModal">
 			<div id="companyChoice">
 				<a onClick={this.createCompany} className="btn btn-lg btn-primary createCompany"><span className="glyphicon glyphicon-plus" /> Create Company</a>{' '}
 				<a onClick={this.joinCompany} className="btn btn-lg btn-primary joinCompany"><span className="glyphicon glyphicon-cloud" /> Join Company</a>
@@ -236,6 +245,10 @@ export default React.createClass({
 		<div className="modal-footer">
 			<p><a onClick={this.signOut}><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>
 		</div>
+	            
+	          </div>
+	        </div>
+	      </div>
       </div>
     );
   }

@@ -6,30 +6,34 @@ import Signup from './signup'
 import CompanyRegistration from './companyregistration'
 import AddUserDetails from './adduserdetails'
 import NavBar from './navigation'
+import Welcome from './welcome'
+import Rota from './rota'
+import Holidays from './holidays'
+import Profile from './profile'
 
 /* 
  * ROUTE RENDERING CODE.
  */
-
 ReactDOM.render((
   <Router history={hashHistory}>
     <Route path="/" component={Login}/>
     <Route path="/signup" component={Signup}/>
     <Route path="/companyregistration" component={CompanyRegistration}/>
     <Route path="/adduserdetails" component={AddUserDetails}/>
-    <Route path="/home"/>
+    <Route component={Welcome}>
+      <Route path="/home" component={NavBar} />
+    </Route>
+    <Route component={Rota}>
+      <Route path="/rota" component={NavBar} />
+    </Route>
+    <Route component={Holidays}>
+      <Route path="/holidays" component={NavBar} />
+    </Route>
+    <Route component={Profile}>
+      <Route path="/profile" component={NavBar} />
+    </Route>
   </Router>
 ), document.getElementById("app"))
-
-ReactDOM.render((
-  <Router history={hashHistory}>
-  	<Route path="/"/>
-  	<Route path="/signup"/>
-    <Route path="/companyregistration"/>
-    <Route path="/adduserdetails"/>
-    <Route path="/home" component={NavBar}/>
-  </Router>
-), document.getElementById("navigation"))
 
 const openAppRoute = (route) => {
   // Helper function to navigation to a different route programmatically.
@@ -50,15 +54,46 @@ $(window).on('hashchange', pageSetup);
 
 function pageSetup(){
     var url = window.location.href;
-    var lastSegment = url.split('/').pop().substring(0,4);
+    var lastSegment = url.split('/').pop();
 
-    if (lastSegment == "home"){
-        $('#AuthenticationModal').modal("hide");
+    if (lastSegment.substring(0,4) == "home"){
+
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+
+
+    }else if(lastSegment.substring(0,6) == "signup"){
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+
+      $('#SignupModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+    }else if(lastSegment.substring(0,19) == "companyregistration"){
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+
+      $('#CompanyRegistrationModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
+    }else if(lastSegment.substring(0,14) == "adduserdetails"){
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+
+      $('#AddUserModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
     }else{
-         $('#AuthenticationModal').modal({
-          backdrop: 'static',
-          keyboard: false
-        });
+      $('body').removeClass('modal-open');
+      $('.modal-backdrop').remove();
+
+      $('#LoginModal').modal({
+        backdrop: 'static',
+        keyboard: false
+      });
     }
 }
 
