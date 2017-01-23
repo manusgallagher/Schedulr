@@ -113,10 +113,21 @@ firebase.auth().onAuthStateChanged(function(user) {
               window.openAppRoute(newUrl);
             }else{
               /*You Don't Need to Add User Details...*/
-              if(snap.val().EmployeeOf || snap.val().EmployerOf){
+              if(snap.val().EmployeeOf){
+                var companyid = snap.val().EmployeeOf.UniqueID;
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
+
+                setTimeout(function (){
+                  window.openAppRoute(newUrl);
+                }, 3000);
+
+              }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
                 var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
-                window.openAppRoute(newUrl);
+                
+                setTimeout(function (){
+                  window.openAppRoute(newUrl);
+                }, 3000);
               }else{
                 /*Create a company / Join a company*/
                 var newUrl =encodeURI("/companyregistration?id="+user.uid);

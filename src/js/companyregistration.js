@@ -65,14 +65,15 @@ export default React.createClass({
 						 */
 						firebase.database().ref('companies/' + enteredID +'/Employees/'+UID).set({
 				          Name: snapshot.val().Name+" "+snapshot.val().Surname,
-				          Joined: now
+				          Joined: now,
 				      	});
 						/* Posting into the 'users' tree
 						 * the New Employment.
 						 */
-				      	firebase.database().ref('users/' +UID+'/EmployeeOf/'+enteredID).set({
+				      	firebase.database().ref('users/' +UID+'/EmployeeOf').set({
 				          Name: snap.val().Name,
-				          Joined: now
+				          Joined: now,
+				          UniqueID: enteredID
 				      	});
 					});	
 					window.openAppRoute("/home?id="+UID+"?company="+enteredID)
