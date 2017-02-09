@@ -6,7 +6,7 @@ import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import FontAwesome from 'react-fontawesome';
-import DrawerSimpleExample from './navdrawer';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const styles = {
   button: {
@@ -16,6 +16,12 @@ const styles = {
     color: 'white',
     fontSize: '120%',
   },
+  notifications:{
+      textAlign: 'center',
+      width: '100%',
+      backgroundColor: 'red',
+      color: 'white',
+    },
 };
 
 const signOut = () => {
@@ -29,8 +35,12 @@ const signOut = () => {
   }
 
 
+var name = "";
 
 export default React.createClass({
+  componentWillMount(){
+    this.getName();
+  },
   param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -45,41 +55,38 @@ export default React.createClass({
 
   getName: function(){
     var personID = this.param('id'); 
-    var latestSnapshot = null;
 
     if(personID.length > 0){
       new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + personID).on('value', function(snap) {
-        latestSnapshot = snap.val().Name; 
+        name = snap.val().Name; 
       });
      }
-
-      return latestSnapshot;
   },
 
 
 
   render() {
     return (
-      <div>
+      <div> 
         <AppBar
             showMenuIconButton={false}
-            title={<img src={"img/logo-nav.png"}/>}
+            title={<img src={"img/logo-nav.png"}/> }
             iconElementRight={
                 <div>
-                <span style={styles.welcome}> Hi {this.getName()} </span>
-                <RaisedButton 
-                  onClick={signOut} 
-                  label="Sign Out" 
-                  primary={true} 
-                  style={styles.button}         
-                  icon={ 
-                      <FontAwesome 
-                        className='super-crazy-colors' 
-                        name='sign-out' 
-                        style={{ color: '#B71C1C' }}
-                      />
-                    }
-                />
+                  <span style={styles.welcome}> Hi {name} </span>
+                  <RaisedButton 
+                    onClick={signOut} 
+                    label="Sign Out" 
+                    primary={true} 
+                    style={styles.button}         
+                    icon={ 
+                        <FontAwesome 
+                          className='super-crazy-colors' 
+                          name='sign-out' 
+                          style={{ color: '#B71C1C' }}
+                        />
+                      }
+                  />
                 </div>
             }
           />

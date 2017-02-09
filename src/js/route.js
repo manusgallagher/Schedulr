@@ -10,6 +10,8 @@ import Welcome from './welcome'
 import Rota from './rota'
 import Holidays from './holidays'
 import Profile from './profile'
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
 
 /* 
  * ROUTE RENDERING CODE.
@@ -119,15 +121,15 @@ firebase.auth().onAuthStateChanged(function(user) {
 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
-                }, 3000);
+                }, 1500);
 
               }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
-                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
+                var newUrl =encodeURI("/rota?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
                 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
-                }, 3000);
+                }, 1500);
               }else{
                 /*Create a company / Join a company*/
                 var newUrl =encodeURI("/companyregistration?id="+user.uid);

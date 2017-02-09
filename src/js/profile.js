@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
 import { Well, Button } from 'react-bootstrap';
 import RaisedButton from 'material-ui/RaisedButton';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
+import Snackbar from 'material-ui/Snackbar';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
   const style = {
     well: {
@@ -23,7 +27,7 @@ import RaisedButton from 'material-ui/RaisedButton';
       fontWeight: 'bold',
     },
     welcomeText: {
-      display: 'inline-block',
+      display:  'inline-block',
       textAlign: 'left',
       fontSize: '120%',
     },
@@ -57,12 +61,28 @@ import RaisedButton from 'material-ui/RaisedButton';
       width: '150px',
     },
     userDetails:{
-      width: '20em',
-    }
+      border: 0,
+      width: '100%',
+    },
   };
 
-
 export default React.createClass({
+  getInitialState: function () {
+    return {
+      name: '',
+      surname: '',
+      address: '',
+      phone: '',
+      email: '',
+      open: false,
+      message: "",
+    }
+  },
+
+  componentWillMount(){
+    this.getUserDetails();
+  },
+
   param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -75,39 +95,111 @@ export default React.createClass({
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     },
 
-  getCompanyName: function(){
-    var companyID = this.param('company'); 
-    var latestSnapshot = null;
+ handleChangeName: function (event) {
+    this.setState({
+      name: event.currentTarget.value,
+    }, () => { // arrow function, ES2015
+      console.log("name " + this.state.name);
+      // call this.props.onUserInput(this.state.value)
+    });
+  },
 
-    if(companyID.length > 0){
-      new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + companyID).on('value', function(snap) {
-        latestSnapshot = snap.val().Name; 
-      });
+  handleChangeSurname: function (event) {
+    this.setState({
+      surname: event.currentTarget.value,
+    }, () => { // arrow function, ES2015
+      console.log("surname " + this.state.surname);
+      // call this.props.onUserInput(this.state.value)
+    });
+  },
+
+  handleChangeAddress: function (event) {
+    this.setState({
+      address: event.currentTarget.value,
+    }, () => { // arrow function, ES2015
+      console.log("address " + this.state.address);
+      // call this.props.onUserInput(this.state.value)
+    });
+  },
+
+  handleChangePhone: function (event) {
+    this.setState({
+      phone: event.currentTarget.value,
+    }, () => { // arrow function, ES2015
+      console.log("phone " + this.state.phone);
+      // call this.props.onUserInput(this.state.value)
+    });
+  },
+
+  handleChangeEmail: function (event) {
+    this.setState({
+      email: event.currentTarget.value,
+    }, () => { // arrow function, ES2015
+      console.log("email " + this.state.email);
+      // call this.props.onUserInput(this.state.value)
+    });
+  },
+
+  getUserDetails: function(){
+    var personID = this.param('id'); 
+    if(personID.length > 0){
+      new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + personID).on('value', function(snap) {
+       this.setState({
+          name: snap.val().Name,
+          surname: snap.val().Surname,
+          address: snap.val().Address,
+          phone: snap.val().Phone,
+          email: snap.val().Email
+        });
+
+      }.bind(this));
      }
-
-      return latestSnapshot;
   },
 
-  getUserDetails: function(detail){
-    var returnDetail = "";
-    if(detail=='name'){
-      returnDetail = "Manus Gallagher";
-    }else if(detail=='address'){
-      returnDetail = "32 Chestnut Grove,\
-                  Glencar,\
-                  Letterkenny,\
-                  \
-                  Co. Donegal.";
-    }else if(detail=='phone'){
-      returnDetail = "0872178736";
-    }
-    else if(detail=='email'){
-      returnDetail = "gallagher.manus@gmail.com";
-    }
+  updateDetails: function() {
+    
+    var personID = this.param('id');
+    var tempName, tempSurname, tempAddress, tempPhone, tempEmail;
+    if(personID.length > 0){
 
-    return returnDetail;
+      new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + personID).on('value', function(snap) {
+          tempName = snap.val().Name;
+          tempSurname = snap.val().Surname;
+          tempAddress = snap.val().Address;
+          tempPhone = snap.val().Phone;
+          tempEmail = snap.val().Email;
+      });
+
+
+      if(tempName != this.state.name || tempSurname != this.state.surname || tempAddress != this.state.address || tempPhone != this.state.phone ||tempEmail != this.state.email){
+        firebase.database().ref('users/' + personID).update({
+          Name: this.state.name,
+          Surname: this.state.surname,
+          Address: this.state.address,
+          Phone: this.state.phone,
+          Email: this.state.email
+        });
+        this.handleTouchTap("Information Updated Successfully");
+
+      } else{
+        this.handleTouchTap("Nothing to Update");
+      }
+     }
+     
   },
 
+  handleTouchTap: function(input){
+    this.setState({
+      open: true,
+      message: input,
+    });
+  },
+
+  handleRequestClose: function(){
+    this.setState({
+      open: false,
+    });
+  },
 
   render() {
     return (
@@ -121,27 +213,41 @@ export default React.createClass({
           </div>
           <div style={style.userContent}>
             <table style={style.profile}>
-              <tr>
-                <td style={style.cell}><b>Name:</b></td>
-                <td style={style.cell}><input className="userDetails" id ="userName" type="text" value ={this.getUserDetails('name')} /></td>
-              </tr>
-              <tr>
-                <td style={style.cell}><b>Address:</b></td>
-                <td style={style.cell}><textarea className="userDetails" id="userAddress" rows="4" cols="22" value={this.getUserDetails('address')}/>
-                </td>
-              </tr>
-              <tr>
-                <td style={style.cell}><b>Phone Number:</b></td>
-                <td style={style.cell}><input className="userDetails" id ="userPhone" type="text" value ={this.getUserDetails('phone')} /></td>
-              </tr>
-              <tr>
-                <td style={style.cell}><b>Email Address:</b></td>
-                <td style={style.cell}><input className="userDetails" id ="userEmail" type="text" value ={this.getUserDetails('email')} /></td>
-              </tr>
+              <tbody>
+                <tr>
+                  <td style={style.cell}><b>Name:</b></td>
+                  <td style={style.cell}><input style={style.userDetails} id ="userName" type="text" onChange={ this.handleChangeName } value ={this.state.name} /></td>
+                </tr>
+                <tr>
+                  <td style={style.cell}><b>Surname:</b></td>
+                  <td style={style.cell}><input style={style.userDetails} id ="userSurname" type="text" onChange={ this.handleChangeSurname } value ={this.state.surname} /></td>
+                </tr>
+                <tr>
+                  <td style={style.cell}><b>Address:</b></td>
+                  <td style={style.cell}><textarea style={style.userDetails} id="userAddress" onChange={ this.handleChangeAddress }  rows="4" cols="22" value={this.state.address}/>
+                  </td>
+                </tr>
+                <tr>
+                  <td style={style.cell}><b>Phone Number:</b></td>
+                  <td style={style.cell}><input style={style.userDetails} id ="userPhone" onChange={ this.handleChangePhone }  type="text" value ={this.state.phone} /></td>
+                </tr>
+                <tr>
+                  <td style={style.cell}><b>Email Address:</b></td>
+                  <td style={style.cell}><input style={style.userDetails} id ="userEmail" onChange={ this.handleChangeEmail }  type="text" value ={this.state.email} /></td>
+                </tr>
+              </tbody>
             </table>
-              <Button bsStyle="primary">Update</Button>
+              <Button bsStyle="primary" onClick={this.updateDetails}>Update</Button>
           </div>
-        </Well>         
+        </Well>
+        <MuiThemeProvider>
+          <Snackbar
+              open={this.state.open}
+              message={this.state.message}
+              autoHideDuration={4000}
+              onRequestClose={this.handleRequestClose}
+            />   
+        </MuiThemeProvider>     
       </div>
     );
   }

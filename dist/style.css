@@ -231,3 +231,50 @@ body{
 	background-color: #9E9E9E;
 }
 
+.time-slot button     {
+  width: 100%;
+  padding:15px 20px; 
+  color:black; 
+  cursor:pointer; 
+  background:#F44336; 
+  border-radius:5px;
+}
+
+.time-slot-eile button     { 
+  width: 100%;
+  padding:15px 20px; 
+  color:black; 
+  cursor:pointer; 
+  background:green; 
+  border-radius:5px;
+}
+
+#calendarView td{
+  padding: 1px;
+}
+
+#calendarView {
+  margin: 0 auto;
+  width: 90%;
+  font-size: 90%;
+  
+}
+
+#calendarView tbody{
+  text-align: center;
+}
+
+.rota-well{
+  overflow-y: scroll
+}
+
+.assignShiftsModal{
+  text-align: center;
+  width: auto;
+}
+
+
+
+
+
+

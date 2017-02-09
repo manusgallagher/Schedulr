@@ -28,8 +28,11 @@ import { Well } from 'react-bootstrap';
     }
   };
 
-
+var companyName = "";
 export default React.createClass({
+  componentWillMount(){
+    this.getCompanyName();
+  },
   param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -43,16 +46,13 @@ export default React.createClass({
     },
 
   getCompanyName: function(){
-    var companyID = this.param('company'); 
-    var latestSnapshot = null;
+    var companyID = this.param('company');
 
     if(companyID.length > 0){
       new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + companyID).on('value', function(snap) {
-        latestSnapshot = snap.val().Name; 
+        companyName = snap.val().Name; 
       });
      }
-
-      return latestSnapshot;
   },
 
 
@@ -65,7 +65,7 @@ export default React.createClass({
            <br/>
            <br/>
            <div id = "welcomeMessage" style={style.welcomeText}>
-            Welcome to <span id="compName" style={style.name}>{this.getCompanyName()}</span>.
+            Welcome to <span id="compName" style={style.name}>{companyName}</span>.
             <br/>
             <br/>
             This is your Company Space;

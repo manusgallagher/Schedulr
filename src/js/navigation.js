@@ -7,6 +7,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import NavBar from './navbar';
 import Drawer from './navdrawer';
 
+
 const muiTheme = getMuiTheme({
   appBar: {
   	color: grey800,
@@ -20,6 +21,7 @@ const muiTheme = getMuiTheme({
 
 
 export default class Authentication extends React.Component {
+  
   render() {
     return (
 		  <MuiThemeProvider muiTheme={muiTheme}>
@@ -27,6 +29,7 @@ export default class Authentication extends React.Component {
 				<NavBar />
 				<Drawer />
 			</div>
+
 		</MuiThemeProvider>
     );
   }
