@@ -47,9 +47,6 @@ var database = firebase.database();
   var rowMap = {'r1':'0800','r2':'0900','r3':'1000','r4':'1100','r5':'1200','r6':'1300','r7':'1400','r8':'1500','r9':'1600','r10':'1700','r11':'1800','r12':'1900','r13':'2000','r14':'2100'};
   var rowMapInverse = {'0800':'r1','0900':'r2','1000':'r3','1100':'r4','1200':'r5','1300':'r6','1400':'r7','1500':'r8','1600':'r9','1700':'r10','1800':'r11','1900':'r12','2000':'r13','2100':'r14'};
 
-  const pleaseWork =() =>{
-    console.log("pleeeeeeeeeeeeeeeeeeeeeeeeeease");
-  };
 
 export default React.createClass({
   getInitialState: function () {
