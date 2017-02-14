@@ -249,6 +249,15 @@ body{
   border-radius:5px;
 }
 
+.time-slot-assigning button     { 
+  width: 100%;
+  padding:23px 20px; 
+  color:black; 
+  cursor:pointer; 
+  background:#0094ff; 
+  border-radius:5px;
+}
+
 #calendarView td{
   padding: 1px;
 }
@@ -268,11 +277,14 @@ body{
   overflow-y: scroll
 }
 
-.assignShiftsModal{
-  text-align: center;
-  width: auto;
+.assigning{
+  display: inline-block;
+  margin-right: 10px;
 }
 
+.assigningRow{
+  display: inline-block;
+}
 
 
 
