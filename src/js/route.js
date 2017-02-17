@@ -125,7 +125,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
               }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
-                var newUrl =encodeURI("/holidays?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
                 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
