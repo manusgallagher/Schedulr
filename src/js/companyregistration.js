@@ -52,31 +52,33 @@ export default React.createClass({
 		var enteredID = $("#companyID").val();
 		var UID = this.param('id');
 		if(enteredID.length > 0){
-			 new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + enteredID).once('value', function(snap) {
-				if(snap.val()!=null){
+			 new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + enteredID).once('value', function(companysnap) {
+				if(companysnap.val()!=null){
 					$("#idError").hide();
 					
 
-					new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function(snapshot) {
+					new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function(usersnap) {
 						var now = new Date().toUTCString();
 
 						/* Posting into the 'companies' tree
 						 * the New Employee.
 						 */
 						firebase.database().ref('companies/' + enteredID +'/Employees/'+UID).set({
-				          Name: snapshot.val().Name+" "+snapshot.val().Surname,
+				          Name: usersnap.val().Name+" "+usersnap.val().Surname,
 				          Joined: now,
 				      	});
 						/* Posting into the 'users' tree
 						 * the New Employment.
 						 */
 				      	firebase.database().ref('users/' +UID+'/EmployeeOf').set({
-				          Name: snap.val().Name,
+				          Name: companysnap.val().Name,
 				          Joined: now,
 				          UniqueID: enteredID
 				      	});
-					});	
-					window.openAppRoute("/home?id="+UID+"?company="+enteredID)
+					});
+					setTimeout(function (){
+	                  window.openAppRoute("/home?id="+UID+"?company="+enteredID);
+	                }, 3000);	
 				}else{
 					$("#idError").empty().append("<b>Error:</b> <br/>"+enteredID+" is not a valid CompanyID.");
 				}				
@@ -95,7 +97,7 @@ export default React.createClass({
 		var UID = this.param('id');
 		var generatedId = this.makeid();
 
-		new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function(snap) {
+		new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function(companysnap) {
 			firebase.database().ref('companies/' + generatedId).set({
 	          Name: name,
 	          Email: email,
@@ -105,7 +107,7 @@ export default React.createClass({
 	      	});
 
 	      	firebase.database().ref('companies/' + generatedId + '/Employer').set({
-	          Name: snap.val().Name + " " + snap.val().Surname,
+	          Name: companysnap.val().Name + " " + companysnap.val().Surname,
 	          UID: UID,
 	          Created: now
 	      	});

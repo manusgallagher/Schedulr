@@ -35,37 +35,9 @@ const signOut = () => {
   }
 
 
-var name = "";
-
 export default React.createClass({
-  componentWillMount(){
-    this.getName();
-  },
-  param: function(name, url) {
-    if (!url) {
-      url = window.location.href;
-    }
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    },
-
-  getName: function(){
-    var personID = this.param('id'); 
-
-    if(personID.length > 0){
-      new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + personID).on('value', function(snap) {
-        name = snap.val().Name; 
-      });
-     }
-  },
-
-
-
   render() {
+
     return (
       <div> 
         <AppBar
@@ -73,7 +45,6 @@ export default React.createClass({
             title={<img src={"img/logo-nav.png"}/> }
             iconElementRight={
                 <div>
-                  <span style={styles.welcome}> Hi {name} </span>
                   <RaisedButton 
                     onClick={signOut} 
                     label="Sign Out" 

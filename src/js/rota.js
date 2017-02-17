@@ -310,15 +310,15 @@ export default React.createClass({
                   </thead>
                   <tbody>
 
-                    <Row handler={this.handler}  time={"8.00"}  r={"r1"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"9.00"}  r={"r2"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"10.00"} r={"r3"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"11.00"} r={"r4"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"12.00"} r={"r5"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"13.00"} r={"r6"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"14.00"} r={"r7"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"15.00"} r={"r8"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"16.00"} r={"r9"} week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"8.00"}  r={"r1"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"9.00"}  r={"r2"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"10.00"} r={"r3"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"11.00"} r={"r4"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"12.00"} r={"r5"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"13.00"} r={"r6"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"14.00"} r={"r7"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"15.00"} r={"r8"}  week={this.state.weekVal} year={this.state.yearVal} />
+                    <Row handler={this.handler}  time={"16.00"} r={"r9"}  week={this.state.weekVal} year={this.state.yearVal} />
                     <Row handler={this.handler}  time={"17.00"} r={"r10"} week={this.state.weekVal} year={this.state.yearVal} />
                     <Row handler={this.handler}  time={"18.00"} r={"r11"} week={this.state.weekVal} year={this.state.yearVal} />
                     <Row handler={this.handler}  time={"19.00"} r={"r12"} week={this.state.weekVal} year={this.state.yearVal} />
@@ -327,9 +327,6 @@ export default React.createClass({
 
                   </tbody>
             </Table>
-            <Modal show={this.state.showModal}>
-            <p>Boom</p>
-            </Modal>
           </div>
         </Well>         
       </div>
