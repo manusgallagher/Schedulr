@@ -72,7 +72,7 @@ export default React.createClass({
             <br/>
             Here you will be assigned hours by your 
             <br/>
-            Employer and you will be to request for
+            Employer and be able to request for
             <br/>
             days off.
           </div>
