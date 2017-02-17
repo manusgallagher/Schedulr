@@ -121,7 +121,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
-                }, 1500);
+                }, 3000);
 
               }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
@@ -129,7 +129,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
-                }, 1500);
+                }, 3000);
               }else{
                 /*Create a company / Join a company*/
                 var newUrl =encodeURI("/companyregistration?id="+user.uid);
