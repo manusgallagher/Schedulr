@@ -42,7 +42,7 @@ export default React.createClass({
 	            <div id="signUpBodyFields" className="modal-body LoginModal">
 		            <p id="signUpError" />
 		            <div className="form-group LoginInput">
-		              <label htmlFor="usrname"><span className="glyphicon glyphicon-user" /> Username</label>
+		              <label htmlFor="usrname"><span className="glyphicon glyphicon-user" /> Email</label>
 		              <input type="text" className="form-control" id="signupemail" placeholder="Enter email" />
 		            </div>
 		            <div className="form-group LoginInput">

@@ -30,7 +30,7 @@ export default React.createClass({
               <div id="loginBodyFields" className="modal-body LoginModal">
                 <p id="loginError" />
                 <div className="form-group LoginInput">
-                  <label htmlFor="usrname"><span className="glyphicon glyphicon-user" />User name</label>
+                  <label htmlFor="usrname"><span className="glyphicon glyphicon-user" /> Email</label>
                   <input type="text" className="form-control" id="loginemail" placeholder="Enter email" />
                 </div>
                 <div className="form-group LoginInput">
