@@ -132,7 +132,7 @@ firebase.auth().onAuthStateChanged(function(user) {
                 }, 3000);
               }else{
                 /*Create a company / Join a company*/
-                var newUrl =encodeURI("/companyregistration?id="+user.uid);
+                var newUrl =encodeURI("/companyregistration?user="+user.uid);
                 window.openAppRoute(newUrl);
               }
             }

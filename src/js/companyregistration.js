@@ -50,7 +50,7 @@ export default React.createClass({
 	submitID: function(){
 
 		var enteredID = $("#companyID").val();
-		var UID = this.param('id');
+		var UID = this.param('user');
 		if(enteredID.length > 0){
 			 new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + enteredID).once('value', function(companysnap) {
 				if(companysnap.val()!=null){
@@ -76,9 +76,9 @@ export default React.createClass({
 				          UniqueID: enteredID
 				      	});
 					});
-					setTimeout(function (){
-	                  window.openAppRoute("/home?id="+UID+"?company="+enteredID);
-	                }, 3000);	
+					
+					window.openAppRoute("/home?id="+UID+"?company="+enteredID);
+	                
 				}else{
 					$("#idError").empty().append("<b>Error:</b> <br/>"+enteredID+" is not a valid CompanyID.");
 				}				
@@ -94,7 +94,7 @@ export default React.createClass({
 		var address = $('#CreateCompanyAddressL1').val() + ", " +$('#CreateCompanyAddressL2').val() + ", " +$('#CreateCompanyAddressL3').val() + ", " +$('#CreateCompanyCounty').val() +".";
 		
 		var now = new Date().toUTCString();
-		var UID = this.param('id');
+		var UID = this.param('user');
 		var generatedId = this.makeid();
 
 		new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + UID).once('value', function(companysnap) {
