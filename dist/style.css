@@ -231,7 +231,7 @@ body{
 	background-color: #9E9E9E;
 }
 
-.time-slot button     {
+.time-slot-unassigned button     {
   width: 100%;
   padding:15px 20px; 
   color:black; 
@@ -240,7 +240,7 @@ body{
   border-radius:5px;
 }
 
-.time-slot-eile button     { 
+.time-slot-assigned button     { 
   width: 100%;
   padding:15px 20px; 
   color:black; 
@@ -284,6 +284,14 @@ body{
 
 .assigningRow{
   display: inline-block;
+}
+
+#assignRow{
+  background-color: red;
+}
+
+#autoAssignBtn{
+  text-align: right;
 }
 
 

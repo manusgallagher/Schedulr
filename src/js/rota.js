@@ -47,12 +47,11 @@ var database = firebase.database();
 
   var rowMap = {'r1':'0800','r2':'0900','r3':'1000','r4':'1100','r5':'1200','r6':'1300','r7':'1400','r8':'1500','r9':'1600','r10':'1700','r11':'1800','r12':'1900','r13':'2000','r14':'2100'};
   var rowMapInverse = {'0800':'r1','0900':'r2','1000':'r3','1100':'r4','1200':'r5','1300':'r6','1400':'r7','1500':'r8','1600':'r9','1700':'r10','1800':'r11','1900':'r12','2000':'r13','2100':'r14'};
-
+  $(".assigningRow").hide();
 
 export default React.createClass({
   getInitialState: function () {
     return {
-      cells: [],
       weekVal: '',
       yearVal: '',
       monDate: '',
@@ -68,16 +67,39 @@ export default React.createClass({
       assignEmployee: '',
       showModal: false,
       shiftsToAssign:[],
+      companyEmployees: [],
+      showAssign: false,
+      userRole: '',
     }
   },
 
   componentWillMount(){
-    /*
-     *  HARDCODED IMPLEMENTATION OF THE COLUMNS AND ROWS - TO BE UPDATED DYNAMICALLY
-     *
-     */
 
-    this.shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts');
+    this.companyRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company'));
+    this.companyRef.once("value", function(companySnapshot) {
+      var employees = companySnapshot.val().Employees;
+      var employeeStruct = [];
+      for(var i in employees)
+      {
+            var fullName = employees[i].Name;
+            var name = "";
+            for(var j =0; j<fullName.length; j++){
+              if(fullName.charAt(j)!=' '){
+               name += fullName.charAt(j);
+              }else{
+                break;
+              }            
+            }
+           employeeStruct.push(name);
+      }
+      
+      this.setState({
+        companyEmployees: employeeStruct,
+      });
+
+    }.bind(this));
+
+    this.shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts/'+this.param('company')+'/allocations');
     this.shiftRef.on("child_added", function(dataSnapshot) {
 
       var p = dataSnapshot.val();
@@ -101,6 +123,22 @@ export default React.createClass({
       });
     }.bind(this));
 
+    this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+this.param('id'));
+    this.employeeRef.on("value", function(dataSnapshot) {
+      var userType = '';
+
+      if(dataSnapshot.val().EmployerOf){
+        userType = "Employer";
+      }else{
+        userType = "Employee";
+      }
+
+      this.setState({
+        userRole: userType,
+      });
+      
+    }.bind(this));
+
     this.setState({
       weekVal: moment().week(),
       yearVal: moment().year(),
@@ -112,7 +150,20 @@ export default React.createClass({
       satDate: moment([moment().year()]).day("Saturday").week(moment().week()).format("DD-MM-YYYY"),
       sunDate: moment([moment().year()]).day("Sunday").week(moment().week()).format("DD-MM-YYYY"),
     });
+
   },
+
+  param: function(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    },
 
   changeWeekDec: function(){
     var tempWeekVal = this.state.weekVal;
@@ -163,43 +214,48 @@ export default React.createClass({
     });
   },
 
-  toggleShowModal: function() {
-    this.setState({showModal: !this.state.showModal});
-
-    console.log("this.state.showModal: "+this.state.showModal)
-  },
-
   handler: function(component, event) {
-    if(this.state.shiftsToAssign.includes(component)){
+    if(this.state.userRole==='Employer'){
+      if(this.state.shiftsToAssign.includes(component)){
 
-      var tempArr = this.state.shiftsToAssign;
+        var tempArr = this.state.shiftsToAssign;
 
-      for(var i = tempArr.length; i--;){
-        if(tempArr[i]===component){
-          tempArr.splice(i, 1);
+        for(var i = tempArr.length; i--;){
+          if(tempArr[i]===component){
+            tempArr.splice(i, 1);
+          }
         }
+
+        this.setState({
+          shiftsToAssign: tempArr,         
+        });
+
+        var idOfButton = '#cell-'+component;
+
+        $(idOfButton).addClass("time-slot-unassigned");
+        $(idOfButton).removeClass("time-slot-assigning");
+        $('.message-'+component).html("Not Assigned");
+
+
+        if(tempArr.length===0){
+          this.setState({
+            showAssign: false,         
+          });
+        }
+
+      }else{
+        var idOfButton = '#cell-'+component;
+
+        $(idOfButton).removeClass("time-slot-unassigned");
+        $(idOfButton).addClass("time-slot-assigning");
+        $('.message-'+component).html("");
+
+        this.state.shiftsToAssign.push(component);
+        this.setState({
+            showAssign: true,         
+          });
       }
-
-      this.setState({
-        shiftsToAssign: tempArr,         
-      });
-
-      var idOfButton = '#cell-'+component;
-
-      $(idOfButton).addClass("time-slot");
-      $(idOfButton).removeClass("time-slot-assigning");
-      $('.message-'+component).html("Not Assigned");
-
-    }else{
-      var idOfButton = '#cell-'+component;
-
-      $(idOfButton).removeClass("time-slot");
-      $(idOfButton).addClass("time-slot-assigning");
-      $('.message-'+component).html("");
-
-      this.state.shiftsToAssign.push(component);
     }
-    
   },
 
   changeEmployee: function(event){
@@ -249,47 +305,57 @@ export default React.createClass({
         
 
         if(time.length > 0 && date.length > 0){
-          firebase.database().ref('shifts/mannies/'+date+'/'+time).set({
+          firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
             employee: this.state.assignEmployee,
           });
 
         }
 
         var idOfButton = '#cell-'+id;
-        $(idOfButton).addClass("time-slot-eile");
+        $(idOfButton).addClass("time-slot-assigned");
         $(idOfButton).removeClass("time-slot-assigning");
         $('.message-'+id).html(this.state.assignEmployee);
       }
 
       this.setState({
         shiftsToAssign: [],
+        showAssign: false,
       });
     }
   },
 
+  getList: function(name){
+    return <option key={name}>{name}</option>;
+  },
+
    render() {
+    //$(".assigningRow").hide();
+    var employeeList = this.state.companyEmployees;
+
     return (
       <div>
         <div>{this.props.children}</div>
         <Well className='rota-well' style={style.well}>
           <div>
+          
             <div className="row assigningRow">
-              <div className="col assigning">
-                <select onChange={this.changeEmployee} value={this.state.assignEmployee}>
-                  <option>--Select an Employee--</option>
-                  <option value="Manus">Manus</option>
-                  <option value="Emma">Emma</option>
-                  <option value="Rebecca">Rebecca</option>
-                  <option value="Mark">Mark</option>
-                  <option value="Cieran">Cieran</option>
-                  <option value="Dylan">Dylan</option>
-                  <option value="Sarah">Sarah</option>
-                </select>
-              </div>
-              <div className="col assigning">
-                <button onClick={this.assignShifts}>Assign</button>
-              </div>
-            </div>
+            { this.state.showAssign ?  
+              <div>
+                <div className="col assigning">
+                  <select onChange={this.changeEmployee} value={this.state.assignEmployee}>
+                    <option>-- Select Employee --</option>
+                    {employeeList.map(this.getList)}
+                  </select>
+                </div>
+
+                <div className="col assigning">
+                  <button onClick={this.assignShifts}>Assign</button>
+                </div> 
+              </div> : <button>Auto Assign</button> 
+
+            }
+            </div> 
+            
             <Table id="calendarView" responsive>
                   <thead>
                     <tr>
@@ -309,7 +375,6 @@ export default React.createClass({
                     </tr>
                   </thead>
                   <tbody>
-
                     <Row handler={this.handler}  time={"8.00"}  r={"r1"}  week={this.state.weekVal} year={this.state.yearVal} />
                     <Row handler={this.handler}  time={"9.00"}  r={"r2"}  week={this.state.weekVal} year={this.state.yearVal} />
                     <Row handler={this.handler}  time={"10.00"} r={"r3"}  week={this.state.weekVal} year={this.state.yearVal} />

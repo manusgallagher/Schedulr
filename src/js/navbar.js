@@ -36,6 +36,32 @@ const signOut = () => {
 
 
 export default React.createClass({
+  param: function(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  },
+
+  getName: function(){
+    var id = this.param("id");
+    var name = "";
+
+    var employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+id);
+    employeeRef.on("value", function(dataSnapshot) {
+
+      name = dataSnapshot.val().Name;
+
+    }.bind(this));
+
+    return name;
+  },
+
   render() {
 
     return (
@@ -45,6 +71,7 @@ export default React.createClass({
             title={<img src={"img/logo-nav.png"}/> }
             iconElementRight={
                 <div>
+                  <span style={styles.welcome}>Hi {this.getName()}</span>
                   <RaisedButton 
                     onClick={signOut} 
                     label="Sign Out" 
