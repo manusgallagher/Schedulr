@@ -188,6 +188,8 @@ export default React.createClass({
       satDate: moment([tempYearVal]).day("Saturday").week(tempWeekVal).format("DD-MM-YYYY"),
       sunDate: moment([tempYearVal]).day("Sunday").week(tempWeekVal).format("DD-MM-YYYY")
     });
+
+
   },
 
   changeWeekInc: function(){
@@ -212,6 +214,7 @@ export default React.createClass({
       satDate: moment([tempYearVal]).day("Saturday").week(tempWeekVal).format("DD-MM-YYYY"),
       sunDate: moment([tempYearVal]).day("Sunday").week(tempWeekVal).format("DD-MM-YYYY")
     });
+
   },
 
   handler: function(component, event) {
@@ -230,11 +233,11 @@ export default React.createClass({
           shiftsToAssign: tempArr,         
         });
 
-        var idOfButton = '#cell-'+component;
+        var idOfButton = '#'+component;
 
         $(idOfButton).addClass("time-slot-unassigned");
         $(idOfButton).removeClass("time-slot-assigning");
-        $('.message-'+component).html("Not Assigned");
+        $('#message-'+component).html("Not Assigned");
 
 
         if(tempArr.length===0){
@@ -244,11 +247,11 @@ export default React.createClass({
         }
 
       }else{
-        var idOfButton = '#cell-'+component;
+        var idOfButton = '#'+component;
 
         $(idOfButton).removeClass("time-slot-unassigned");
         $(idOfButton).addClass("time-slot-assigning");
-        $('.message-'+component).html("");
+        $('#message-'+component).html("");
 
         this.state.shiftsToAssign.push(component);
         this.setState({
@@ -262,46 +265,53 @@ export default React.createClass({
     this.setState({assignEmployee: event.target.value});
   },
 
+  getRowAndColumnValues: function(id){
+    var rValue="";
+    var cValue="";
+
+    for(var j=0; j<id.length; j++){
+        if(id.charAt(j)==='c'){
+
+          rValue = id.substring(0, j);
+          cValue = id.substring(j, id.length);
+        }
+      }
+
+     var time = rowMap[rValue];
+
+     var date = "";
+      
+      //console.log("cValue: " + cValue);
+      if(cValue==='c1'){
+        date = this.state.sunDate;
+      }else if(cValue==='c2'){
+        date = this.state.monDate;
+      }else if(cValue==='c3'){
+        date = this.state.tuesDate;
+      }else if(cValue==='c4'){
+        date = this.state.wedDate;
+      }else if(cValue==='c5'){
+        date = this.state.thursDate;
+      }else if(cValue==='c6'){
+        date = this.state.friDate;
+      }else {
+        date = this.state.satDate;
+      }
+
+      return [time, date];
+  },
+
   assignShifts: function(){
 
     if(this.state.assignEmployee.length>0){
-      var rValue = '';
-      var cValue = '';
 
       for(var i = 0; i<this.state.shiftsToAssign.length; i++){
         var id = this.state.shiftsToAssign[i];
 
-        console.log("ID: " + id);
-        
+        var timeAndDate = this.getRowAndColumnValues(id);
 
-        for(var j=0; j<id.length; j++){
-          if(id.charAt(j)==='c'){
-
-            rValue = id.substring(0, j);
-            cValue = id.substring(j, id.length);
-          }
-        }
-
-        var time = rowMap[rValue];
-        var date = "";
-        
-        //console.log("cValue: " + cValue);
-        if(cValue==='c1'){
-          date = this.state.sunDate;
-        }else if(cValue==='c2'){
-          date = this.state.monDate;
-        }else if(cValue==='c3'){
-          date = this.state.tuesDate;
-        }else if(cValue==='c4'){
-          date = this.state.wedDate;
-        }else if(cValue==='c5'){
-          date = this.state.thursDate;
-        }else if(cValue==='c6'){
-          date = this.state.friDate;
-        }else {
-          date = this.state.satDate;
-        }
-
+        var time = timeAndDate[0];
+        var date = timeAndDate[1];
         
 
         if(time.length > 0 && date.length > 0){
@@ -311,10 +321,10 @@ export default React.createClass({
 
         }
 
-        var idOfButton = '#cell-'+id;
+        var idOfButton = '#'+id;
         $(idOfButton).addClass("time-slot-assigned");
         $(idOfButton).removeClass("time-slot-assigning");
-        $('.message-'+id).html(this.state.assignEmployee);
+        $('#message-'+id).html(this.state.assignEmployee);
       }
 
       this.setState({
@@ -326,6 +336,44 @@ export default React.createClass({
 
   getList: function(name){
     return <option key={name}>{name}</option>;
+  },
+
+  getRandomInt: function(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  },
+
+  autoSchedule: function(){
+    console.log("Auto Scheduling Initiated!!");
+    var idsToBeAssigned = $('.time-slot-unassigned').map(function() {
+      return $(this).attr('id');
+    });
+    var employeeList = this.state.companyEmployees;
+    console.log(employeeList.length + ": "+employeeList);
+
+    for(var i =0; i<idsToBeAssigned.length; i++){
+      var rand = this.getRandomInt(0,employeeList.length);
+      var employee = employeeList[rand];
+
+      var id = idsToBeAssigned[i];
+
+      var timeAndDate = this.getRowAndColumnValues(id);
+      var time = timeAndDate[0];
+      var date = timeAndDate[1];
+
+
+     if(time.length > 0 && date.length > 0){
+        firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
+          employee: employee,
+        });
+      }
+
+      $("#"+id).removeClass("time-slot-unassigned");
+      $("#"+id).addClass("time-slot-assigned");
+      $("#message-"+id).html(employee);
+    }
+    
   },
 
    render() {
@@ -351,10 +399,17 @@ export default React.createClass({
                 <div className="col assigning">
                   <button onClick={this.assignShifts}>Assign</button>
                 </div> 
-              </div> : <button>Auto Assign</button> 
+              </div> : 
+
+
+              <div>
+                { this.state.userRole === 'Employer' ?
+                  <button onClick={this.autoSchedule}>Auto Assign</button> :null
+                }
+              </div>
 
             }
-            </div> 
+            </div>
             
             <Table id="calendarView" responsive>
                   <thead>

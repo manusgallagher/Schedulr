@@ -54,7 +54,7 @@ export default React.createClass({
 
     	if(employeeAssigned.length > 0){
     		return (
-				<td className={'time-slot-assigned ' + cellID}>  			
+				<td id={cellID} className={'time-slot-assigned'}>  			
 					<button> 
 						<span id={'message-'+cellID}>{employeeAssigned}</span> 
 					</button> 
@@ -62,9 +62,9 @@ export default React.createClass({
 	        )
     	}else{
     		return (
-				<td id={'cell-'+cellID} className={'time-slot-unassigned'}> 
+				<td id={cellID} className={'time-slot-unassigned'}> 
 					<button className={'button-'+cellID} onClick={this.props.handler.bind(null, cellID)}> 
-						<span className={'message-'+cellID}>Not Assigned</span> 
+						<span id={'message-'+cellID}>Not Assigned</span> 
 					</button>
 				</td>
 	        )
