@@ -2,23 +2,114 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
 import moment from 'moment';
+import DatePicker from 'react-datepicker';
 
 export default React.createClass({
+    getInitialState: function () {
+        return {
+            startDate:  moment(),
+            datesPending: [],
+            datesApproved: [],
+        }
+    },
+    componentWillMount(){
+        var userID = this.param("id");
+        var companyID = this.param("company");
+        var exists = false;
+
+        this.unapprovedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/pending/');
+
+        this.unapprovedHolidayRef.child(userID).once('value', function(snapshot) {
+            exists = (snapshot.val() !== null);
+            this.handlePrevReqShifts(userID, companyID, exists);
+          }.bind(this));
+
+        this.approvedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/approved/');
+
+        this.approvedHolidayRef.child(userID).once('value', function(snapshot) {
+            exists = (snapshot.val() !== null);
+            this.handlePrevApprShifts(userID, companyID, exists);
+          }.bind(this));
+    },
+
+    handlePrevReqShifts: function(userID, companyID, event){
+        if(event){            
+
+            this.unapprovedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/pending/'+userID);
+            this.unapprovedHolidayRef.once("value", function(dataSnapshot) {
+                this.setState({
+                  datesPending: dataSnapshot.val().dates,  
+                });
+            }.bind(this));
+        }
+    },
+    handlePrevApprShifts: function(userID, companyID, event){
+        if(event){            
+
+            this.approvedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/approved/'+userID);
+            this.approvedHolidayRef.once("value", function(dataSnapshot) {
+                this.setState({
+                  datesApproved: dataSnapshot.val().dates,  
+                });
+            }.bind(this));
+        }
+    },
+    handleChange: function(date) {
+        this.setState({
+            startDate: date
+        });
+    },
+
+    param: function(name, url) {
+        if (!url) {
+          url = window.location.href;
+        }
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    },
+
+    requestHoliday: function(){
+        var userID = this.param("id");
+        var companyID = this.param("company");
+        var date = this.state.startDate.format("DD-MM-YYYY");
+        var reqHolidays = this.state.datesPending;
+        var appHolidays = this.state.datesApproved;
+
+        if(reqHolidays.includes(date) || appHolidays.includes(date)){
+            console.log("NOPE");
+        }else{
+            console.log(userID + " has requested to book off: " + date + " for company: " + companyID);
+            reqHolidays.push(date);
+            console.log(reqHolidays);
+            this.setState({
+                datesPending: reqHolidays,
+            });
+        }
+
+
+
+        this.holidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/pending/'+userID);
+        this.holidayRef.update({
+          dates: reqHolidays,
+        });
+
+        
+    },
     render() {
-        var month = this.props.month;
-        var year = this.props.year;
-        var numOfDays = moment([this.props.year, this.props.month]).daysInMonth();
-
-
-        var calendarCells = (<tr><td> 1 </td><td> 2 </td><td> 3 </td><td> 4 </td><td> 5 </td></tr>);
             
         return (
             <div>
-                <table>
-                    <tbody>
-                        {calendarCells} 
-                    </tbody>
-                </table>
+               <DatePicker
+                dateFormat="DD-MM-YYYY"
+                selected={this.state.startDate}
+                onChange={this.handleChange}
+              />
+
+              <button onClick={this.requestHoliday}>Request</button>
             </div>
         )   
     }

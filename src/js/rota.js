@@ -67,9 +67,10 @@ export default React.createClass({
       assignEmployee: '',
       showModal: false,
       shiftsToAssign:[],
-      companyEmployees: [],
+      companyEmployeesID: [],
       showAssign: false,
       userRole: '',
+      holidaysApproved: [],
     }
   },
 
@@ -78,23 +79,26 @@ export default React.createClass({
     this.companyRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company'));
     this.companyRef.once("value", function(companySnapshot) {
       var employees = companySnapshot.val().Employees;
-      var employeeStruct = [];
-      for(var i in employees)
+      var employeeIDStruct = {};
+      for(var id in employees)
       {
-            var fullName = employees[i].Name;
+           
+            var fullName = employees[id].Name;
             var name = "";
+
             for(var j =0; j<fullName.length; j++){
               if(fullName.charAt(j)!=' '){
                name += fullName.charAt(j);
               }else{
                 break;
-              }            
-            }
-           employeeStruct.push(name);
+              }                       
+            }           
+            
+            employeeIDStruct[id] = name;
+            
       }
-      
       this.setState({
-        companyEmployees: employeeStruct,
+        companyEmployeesID: employeeIDStruct,
       });
 
     }.bind(this));
@@ -150,6 +154,23 @@ export default React.createClass({
       satDate: moment([moment().year()]).day("Saturday").week(moment().week()).format("DD-MM-YYYY"),
       sunDate: moment([moment().year()]).day("Sunday").week(moment().week()).format("DD-MM-YYYY"),
     });
+
+    this.approvedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company')+'/holidays/approved');
+    this.approvedHolidayRef.once("value", function(dataSnapshot) {
+      var holidays = dataSnapshot.val();
+      var tempDates = [];
+
+      for(var key in holidays){ 
+        var tempDict = {};
+        var employeeID =holidays[key];
+        tempDict[employeeID.dates[0]] = key;
+        tempDates.push(tempDict);
+
+      }
+      this.setState({
+        holidaysApproved : tempDates,
+      });
+    }.bind(this));
 
   },
 
@@ -334,8 +355,11 @@ export default React.createClass({
     }
   },
 
-  getList: function(name){
-    return <option key={name}>{name}</option>;
+  getList: function(id){
+      var name = this.state.companyEmployeesID[id];
+
+      return <option key={id}>{name}</option>;
+
   },
 
   getRandomInt: function(min, max) {
@@ -345,11 +369,13 @@ export default React.createClass({
   },
 
   autoSchedule: function(){
-    console.log("Auto Scheduling Initiated!!");
+    var holidaysBooked = this.state.holidaysApproved;
+    console.log(holidaysBooked);
+
     var idsToBeAssigned = $('.time-slot-unassigned').map(function() {
       return $(this).attr('id');
     });
-    var employeeList = this.state.companyEmployees;
+    var employeeList = this.state.companyEmployeesID;
     console.log(employeeList.length + ": "+employeeList);
 
     for(var i =0; i<idsToBeAssigned.length; i++){
@@ -363,11 +389,25 @@ export default React.createClass({
       var date = timeAndDate[1];
 
 
-     if(time.length > 0 && date.length > 0){
+      /*for(var i=0; i<holidaysBooked.length; i++){
+        var holidaysByEmployee = holidaysBooked[i];
+        
+        for(var dateBooked in holidaysByEmployee){
+          if(dateBooked===date){
+            var id = holidaysByEmployee[dateBooked];
+            var name = this.state.companyEmployeesID[id];
+            console.log(name + " has booked off " + dateBooked +" ("+ id + ")");
+            break;
+          }
+        }
+      }*/
+
+
+     /*if(time.length > 0 && date.length > 0){
         firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
           employee: employee,
         });
-      }
+      }*/
 
       $("#"+id).removeClass("time-slot-unassigned");
       $("#"+id).addClass("time-slot-assigned");
@@ -378,7 +418,11 @@ export default React.createClass({
 
    render() {
     //$(".assigningRow").hide();
-    var employeeList = this.state.companyEmployees;
+    var employeeList = [];
+
+    for(var i in this.state.companyEmployeesID){
+      employeeList.push(i);
+    }
 
     return (
       <div>
