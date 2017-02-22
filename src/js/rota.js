@@ -158,15 +158,21 @@ export default React.createClass({
     this.approvedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company')+'/holidays/approved');
     this.approvedHolidayRef.once("value", function(dataSnapshot) {
       var holidays = dataSnapshot.val();
-      var tempDates = [];
+      var tempDates = {};
+      var dateOfHoliday = "";
+      var keys = [];
 
       for(var key in holidays){ 
-        var tempDict = {};
-        var employeeID =holidays[key];
-        tempDict[employeeID.dates[0]] = key;
-        tempDates.push(tempDict);
-
+        var employeeID = holidays[key];
+        dateOfHoliday = employeeID.dates[0];
+        keys.push(key);
+        
+        
       }
+
+      tempDates[dateOfHoliday] = keys;
+      console.log(tempDates);
+
       this.setState({
         holidaysApproved : tempDates,
       });
@@ -371,43 +377,49 @@ export default React.createClass({
   autoSchedule: function(){
     var holidaysBooked = this.state.holidaysApproved;
     console.log(holidaysBooked);
-
+    
     var idsToBeAssigned = $('.time-slot-unassigned').map(function() {
       return $(this).attr('id');
     });
-    var employeeList = this.state.companyEmployeesID;
-    console.log(employeeList.length + ": "+employeeList);
+
+    var employeeList = [];
+    for(i in this.state.companyEmployeesID){
+      employeeList.push(this.state.companyEmployeesID[i]);
+    } 
 
     for(var i =0; i<idsToBeAssigned.length; i++){
-      var rand = this.getRandomInt(0,employeeList.length);
-      var employee = employeeList[rand];
+      
+      var employeesAvailable = employeeList.slice(); //copying array by value ---> not reference
 
       var id = idsToBeAssigned[i];
-
       var timeAndDate = this.getRowAndColumnValues(id);
       var time = timeAndDate[0];
       var date = timeAndDate[1];
+      
+     
 
+      if(holidaysBooked[date]){
 
-      /*for(var i=0; i<holidaysBooked.length; i++){
-        var holidaysByEmployee = holidaysBooked[i];
-        
-        for(var dateBooked in holidaysByEmployee){
-          if(dateBooked===date){
-            var id = holidaysByEmployee[dateBooked];
-            var name = this.state.companyEmployeesID[id];
-            console.log(name + " has booked off " + dateBooked +" ("+ id + ")");
-            break;
+        var employeeArr = holidaysBooked[date];
+        for(var employee in employeeArr){
+          var name = this.state.companyEmployeesID[employeeArr[employee]];
+          var index = employeesAvailable.indexOf(name);
+          if (index > -1) {
+              employeesAvailable.splice(index, 1);
           }
         }
-      }*/
+      }else{
+        employeesAvailable = employeeList;
+      }
 
+      var rand = this.getRandomInt(0,employeesAvailable.length);
+      var employee = employeesAvailable[rand];
 
-     /*if(time.length > 0 && date.length > 0){
+      if(time.length > 0 && date.length > 0){
         firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
           employee: employee,
         });
-      }*/
+      }
 
       $("#"+id).removeClass("time-slot-unassigned");
       $("#"+id).addClass("time-slot-assigned");
