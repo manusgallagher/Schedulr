@@ -4,8 +4,7 @@
   "description": "Staff Scheduling Application",
   "main": "webpack.config.js",
   "scripts": {
-    "start": "webpack-dev-server --inline --content-base dist",
-    "install": "service nginx stop && git pull origin master && npm install && webpack && service nginx start"
+    "start": "webpack-dev-server --inline --content-base dist"
 
   },
   "author": "Manus Gallagher",
