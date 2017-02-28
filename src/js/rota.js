@@ -135,7 +135,7 @@ var ShiftRow = React.createClass({
     }
     
     var shiftsAssigned = [];
-    console.log(this.props.shifts);
+    
     for(var dates in this.props.shifts){
         if(dates!=".key"){
           shiftDates.push(dates);
@@ -267,11 +267,17 @@ var Rota = React.createClass({
               <option>-- Select Employee --</option>
                 {employeeIDs.map(this.getEmployeeDropdown)}
             </select>
-            <button onClick={this.assignShifts}>Assign</button>
+            <button onClick={this.assignShifts}>{Assign}</button>
           </div> : null}
         <div id="rotaContainer">
           <div className="rotaRow">
-            <button className="time-slot">times:</button>
+            <button className="time-slot">
+                <div id="arrowsAndWeekVal">
+                  <a className="weekArrows"><FontAwesome name='arrow-left' /></a>
+                  {this.state.weekNum}
+                  <a className="weekArrows"><FontAwesome name='arrow-right' /></a>
+                </div>
+            </button>
             <button className="time-slot">9:00</button>
             <button className="time-slot">10:00</button>
             <button className="time-slot">11:00</button>

@@ -305,6 +305,15 @@ body{
   text-align: right;
 }
 
+.weekArrows{
+  color: black;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#arrowsAndWeekVal{
+  font-size: 10pt;
+}
 
 
 
