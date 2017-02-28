@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
 import { Well, Modal, Button } from 'react-bootstrap';
-import Row from './row';
 import FontAwesome from 'react-fontawesome';
 import moment from 'moment';
 import { Table } from 'react-bootstrap';
