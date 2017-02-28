@@ -29,7 +29,7 @@ export default React.createClass({
 
       var name    = $("#AddDetailsName").val();
       var surname   = $("#AddDetailsSurname").val();
-      var address   = $("#AddDetailsAddressL1").val()+", "+$("#AddDetailsAddressL2").val()+", "+$("#AddDetailsAddressL3").val()+", "+$("#AddDetailsCounty").val();
+      var address   = $("#AddDetailsAddressL1").val()+", "+$("#AddDetailsAddressL2").val()+", "+$("#AddDetailsAddressL3").val()+", "+$("#AddDetailsCounty").val()+".";
       var dob     = $("#AddDetailsDOB").val();
       var phoneNumber = $("#AddDetailsPhone").val();
 
