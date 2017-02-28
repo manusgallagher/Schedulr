@@ -46,6 +46,19 @@ for(var week=1; week<=weeks; week++){
     count++;
   }
 }/**/
+function param(name, url) {
+  if (!url) {
+    url = window.location.href;
+  }
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+};
+
 var employeesList = ["Becky", "Emma", "Cieran", "Dylan", "Mark", "Sarah", "Joey", "Jason", "Kunal", "Rachel"];
 var assignEmployee = "";
 var columnValue = -1;
@@ -144,30 +157,60 @@ var Rota = React.createClass({
 
   getInitialState: function() {
     return {
-      shifts: []
+      shifts: [],
+      employeeToAssign: "",
+      companyEmployees: [],
     };
   },
 
   componentWillMount: function() {
     this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum), "shifts");
-  },
-  
 
-  render: function() {
+    /*
+     * Populating Object with Employee ID's and Names.
+     */
+    this.companyRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+param('company'));
+    this.companyRef.once("value", function(companySnapshot) {
+      var employees = companySnapshot.val().Employees;
+      var employeeIDsAndNames = {};
+      for(var id in employees){
+
+        var fullName = employees[id].Name;
+        var name = "";
+
+        for(var j =0; j<fullName.length; j++){
+          if(fullName.charAt(j)!=' '){
+            name += fullName.charAt(j);
+          }else{
+            break;
+          }                       
+        }           
+
+        employeeIDsAndNames[id] = name;
+
+      }
+      this.setState({
+        companyEmployees: employeeIDsAndNames,
+      });
+
+    }.bind(this));
     
-    function changeEmployee(e){
-      assignEmployee = e.target.value;
-    }
+  },
 
-    function createEmployeeList(name){
-     // var name = this.state.companyEmployeesID[id];
+  getEmployeeDropdown: function(id){
+      var name = this.state.companyEmployees[id];
 
-     return <option key={name}>{name}</option>;
-    }
+      return <option key={id}>{name}</option>;
 
-    function assignShifts(){
+  },
 
-      if(assignEmployee.length>0){
+  changeEmployee: function(e){
+      this.setState({employeeToAssign: e.target.value});
+  },
+
+  assignShifts: function(){
+
+      if(this.state.employeeToAssign.length>0){
         for(var i in shiftsToAssign){
           var shiftDetails= shiftsToAssign[i];
           for(var date in shiftDetails){
@@ -176,11 +219,14 @@ var Rota = React.createClass({
               var shiftDate = date+"-2017";
               var dow = moment(shiftDate, "DD-MM-YYYY").day();
 
+              /*
+               * REMOVE THIS
+               */
               console.log("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
               
               var obj ={};
               var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
-              obj[shiftTime]=assignEmployee;
+              obj[shiftTime]=this.state.employeeToAssign;
               
               shiftRef.update(obj);
             }           
@@ -189,17 +235,24 @@ var Rota = React.createClass({
         }
       }
       shiftsToAssign=[]; 
-    }
-    
+    },
+  
 
+  render: function() {
+    var employeeIDs = [];
+
+    for(var id in this.state.companyEmployees){
+      employeeIDs.push(id);
+    } 
+    
     return (
       <div>
         <div className="employeeList">
-          <select onChange={changeEmployee} value={assignEmployee}>
+          <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
             <option>-- Select Employee --</option>
-              {employeesList.map(createEmployeeList)}
+              {employeeIDs.map(this.getEmployeeDropdown)}
           </select>
-          <button onClick={assignShifts}>Assign</button>
+          <button onClick={this.assignShifts}>Assign</button>
         </div>
         <div id="rotaContainer">
           <div className="rotaRow">

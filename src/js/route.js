@@ -11,7 +11,6 @@ import Rota from './rota'
 import Holidays from './holidays'
 import Profile from './profile'
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import Favicon from 'react-favicon';
 injectTapEventPlugin();
 
 /* 
