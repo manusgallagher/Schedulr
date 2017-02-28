@@ -238,7 +238,7 @@ body{
   padding:15px 20px;
   margin-right: 2px; 
   color:black; 
-  cursor:pointer; 
+  cursor:default;  
   border-radius:5px;
   font-size: 70%;
   background: #9C9A9A;
@@ -248,15 +248,18 @@ body{
 .unassigned     { 
   background:white; 
   border: 1.7px solid #700002;
+  cursor:pointer;
 }
 .assigned     { 
   background:#66ff66; 
   border: 1.7px solid #006913;
+  cursor:pointer;
 }
 
 .assigning     { 
   background:#D1EFFF;
   border: 1.7px solid #00121C; 
+  cursor:pointer;
 }
 
 .rotaRow{
@@ -307,14 +310,28 @@ body{
 
 .weekArrows{
   color: black;
+  cursor:pointer;
   margin-right: 10px;
   margin-left: 10px;
-}
 
-#arrowsAndWeekVal{
-  font-size: 10pt;
 }
 
 
+#arrowsAndWeekVal     {
+  width:10%;
+  height: 5em;
+  position: relative;
+  
+  margin-right: 2px; 
+  color:black; 
+  cursor:default; 
+  border-radius:5px;
+  margin-bottom: -1%;
+  display: inline-block;
+
+  padding: 0;
+  border: none;
+  background: none;
+}
 
 
