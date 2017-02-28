@@ -71,7 +71,7 @@ var ShiftRow = React.createClass({
   render: function() {
     var _this = this;
     var createCell = function(item, index) {
-      
+
       var cellClicked = function(row, column, cellID){
         var date = shiftDates[row];
         var time = shiftTimes[column];
@@ -107,6 +107,11 @@ var ShiftRow = React.createClass({
             shiftsToAssign.splice(posToRemove,1);
           }
         } 
+        if(shiftsToAssign.length>0){
+          _this.props.changeDropdownStatus(true);
+        }else{
+          _this.props.changeDropdownStatus(false);
+        }
       }
 
       var row =  columnValue;
@@ -147,6 +152,7 @@ var ShiftRow = React.createClass({
       }else{
         columnValue++;
       }
+
     return <div className="rotaRow"><button className="time-slot">{this.props.date}</button>{shiftsAssigned.map(createCell)}</div>;
       
   }
@@ -160,6 +166,7 @@ var Rota = React.createClass({
       shifts: [],
       employeeToAssign: "",
       companyEmployees: [],
+      showDropDown: false,
     };
   },
 
@@ -208,6 +215,10 @@ var Rota = React.createClass({
       this.setState({employeeToAssign: e.target.value});
   },
 
+  changeDropDownState: function(flag){
+    this.setState({showDropDown: flag});
+  },
+
   assignShifts: function(){
 
       if(this.state.employeeToAssign.length>0){
@@ -247,13 +258,14 @@ var Rota = React.createClass({
     
     return (
       <div>
-        <div className="employeeList">
-          <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
-            <option>-- Select Employee --</option>
-              {employeeIDs.map(this.getEmployeeDropdown)}
-          </select>
-          <button onClick={this.assignShifts}>Assign</button>
-        </div>
+          {this.state.showDropDown ?
+          <div className="employeeList">
+            <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
+              <option>-- Select Employee --</option>
+                {employeeIDs.map(this.getEmployeeDropdown)}
+            </select>
+            <button onClick={this.assignShifts}>Assign</button>
+          </div> : null}
         <div id="rotaContainer">
           <div className="rotaRow">
             <button className="time-slot">times:</button>
@@ -271,13 +283,13 @@ var Rota = React.createClass({
             <button className="time-slot">20:00</button>
             <button className="time-slot">21:00</button>
           </div>
-          <ShiftRow row ={"0"} shifts={ this.state.shifts[0] }  date = { moment(2017, "YYYY").day(0).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"1"} shifts={ this.state.shifts[1] }  date = { moment(2017, "YYYY").day(1).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"2"} shifts={ this.state.shifts[2] }  date = { moment(2017, "YYYY").day(2).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"3"} shifts={ this.state.shifts[3] }  date = { moment(2017, "YYYY").day(3).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"4"} shifts={ this.state.shifts[4] }  date = { moment(2017, "YYYY").day(4).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"5"} shifts={ this.state.shifts[5] }  date = { moment(2017, "YYYY").day(5).week(9).format("ddd Do MMM") } />
-          <ShiftRow row ={"6"} shifts={ this.state.shifts[6] }  date = { moment(2017, "YYYY").day(6).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[0] }  date = { moment(2017, "YYYY").day(0).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[1] }  date = { moment(2017, "YYYY").day(1).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[2] }  date = { moment(2017, "YYYY").day(2).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[3] }  date = { moment(2017, "YYYY").day(3).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[4] }  date = { moment(2017, "YYYY").day(4).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[5] }  date = { moment(2017, "YYYY").day(5).week(9).format("ddd Do MMM") } />
+          <ShiftRow dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts[6] }  date = { moment(2017, "YYYY").day(6).week(9).format("ddd Do MMM") } />
         </div>
       </div>
     );
