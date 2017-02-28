@@ -6,6 +6,7 @@ import moment from 'moment';
 var rowMap = {'0.00':'0000','1.00':'0100','2.00':'0200','3.00':'0300','4.00':'0400','5.00':'0500','6.00':'0600','7.00':'0700','8.00':'0800','9.00':'0900','10.00':'1000','11.00':'1100','12.00':'1200','13.00':'1300','14.00':'1400','15.00':'1500','16.00':'1600','17.00':'1700','18.00':'1800','19.00':'1900','20.00':'2000','21.00':'2100','22.00':'2200','23.00':'2300'};
 
 export default React.createClass({
+
     param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -46,10 +47,6 @@ export default React.createClass({
 			employeeAssigned = dataSnapshot.val();
 
 		});
-
-		function showModal(val){
-			console.log("showModal: " + val);
-		}
 		var cellID = this.props.r + this.props.c;
 
     	if(employeeAssigned.length > 0){

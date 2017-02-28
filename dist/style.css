@@ -231,31 +231,38 @@ body{
 	background-color: #9E9E9E;
 }
 
-.time-slot-unassigned button     {
-  width: 100%;
-  padding:15px 20px; 
+.time-slot     {
+  width:10%;
+  height: 5em;
+  position: relative;
+  padding:15px 20px;
+  margin-right: 2px; 
   color:black; 
   cursor:pointer; 
-  background:#F44336; 
   border-radius:5px;
+  font-size: 70%;
+  background: #9C9A9A;
+  display: inline-block;
+  border: 1.7px solid black;
+}
+.unassigned     { 
+  background:white; 
+  border: 1.7px solid #700002;
+}
+.assigned     { 
+  background:#66ff66; 
+  border: 1.7px solid #006913;
 }
 
-.time-slot-assigned button     { 
-  width: 100%;
-  padding:15px 20px; 
-  color:black; 
-  cursor:pointer; 
-  background:green; 
-  border-radius:5px;
+.assigning     { 
+  background:#D1EFFF;
+  border: 1.7px solid #00121C; 
 }
 
-.time-slot-assigning button     { 
+.rotaRow{
   width: 100%;
-  padding:23px 20px; 
-  color:black; 
-  cursor:pointer; 
-  background:#0094ff; 
-  border-radius:5px;
+  float: left;
+  margin-bottom: 5px;
 }
 
 #calendarView td{
@@ -274,12 +281,16 @@ body{
 }
 
 .rota-well{
-  overflow-y: scroll
-}
-
-.assigning{
-  display: inline-block;
-  margin-right: 10px;
+  width: 80%;
+  height: 80%;
+  position: fixed;
+  top: 55%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
 .assigningRow{

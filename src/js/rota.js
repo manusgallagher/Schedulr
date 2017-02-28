@@ -7,505 +7,241 @@ import FontAwesome from 'react-fontawesome';
 import moment from 'moment';
 import { Table } from 'react-bootstrap';
 
+/*
+ * CODE USED TO AUTO ADD DATES TO FIREBASE
+ *
+ *
 
-var database = firebase.database();
+var year = 2017;
+var date = moment().year(year);
+var hours = ['900','1000','1100','1200','1300','1400'];
 
-  const style = {
-    well: {
-      width: '80%',
-      height: '80%',
-      position: 'fixed',
-      top: '55%',
-      left: '50%',
-      /* bring your own prefixes */
-      transform: 'translate(-50%, -50%)',
-    },
-    weekButton:{
-      color: 'black',
-      marginRight: '5px',
-      marginLeft: '5px',
-      float:'left',
-    },
-    weekValue:{
-      backgroundColor: 'red',
 
-    },
-    tableHeader:{
-      textAlign: 'center',
-    },
-    weekStepper:{
-      float: 'right',
-      paddingRight: '2%',
-    },
-    times:{
-      width: '6.5%',
-      fontWeight: 'bold',
-      textAlign: 'center',
-      verticalAlign:'middle',
-    },
-  };
+var count  = 0;
+var weeks = (moment(year, "YYYY").weeksInYear());
 
-  var rowMap = {'r1':'0800','r2':'0900','r3':'1000','r4':'1100','r5':'1200','r6':'1300','r7':'1400','r8':'1500','r9':'1600','r10':'1700','r11':'1800','r12':'1900','r13':'2000','r14':'2100'};
-  var rowMapInverse = {'0800':'r1','0900':'r2','1000':'r3','1100':'r4','1200':'r5','1300':'r6','1400':'r7','1500':'r8','1600':'r9','1700':'r10','1800':'r11','1900':'r12','2000':'r13','2100':'r14'};
-  $(".assigningRow").hide();
+for(var week=1; week<=weeks; week++){
+  //console.log(week);
+  var count  = 0; 
+  for(var day=0; day<7; day++){
+    
+    var date = moment(year, "YYYY").day(day).week(week);
+    for(var i in hours){
+      var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/'+year+'/'+week+'/'+count+'/'+date.format("DD-MM"));
+      shiftRef.set({  '900' :'Unassigned',
+                      '1000':'Unassigned',
+                      '1100':'Unassigned',
+                      '1200':'Unassigned',
+                      '1300':'Unassigned',
+                      '1400':'Unassigned',
+                      '1500':'Unassigned',
+                      '1600':'Unassigned',
+                      '1700':'Unassigned',
+                      '1800':'Unassigned',
+                      '1900':'Unassigned',
+                      '2000':'Unassigned',
+                      '2100':'Unassigned'});
 
-export default React.createClass({
-  getInitialState: function () {
+    }
+    count++;
+  }
+}/**/
+var employeesList = ["Becky", "Emma", "Cieran", "Dylan", "Mark", "Sarah", "Joey", "Jason", "Kunal", "Rachel"];
+var assignEmployee = "";
+var columnValue = -1;
+var shiftDates = [];
+var shiftTimes = [];
+var weekNum = 9;
+var shiftsToAssign = [];
+
+var ShiftRow = React.createClass({
+  render: function() {
+    var _this = this;
+    var createCell = function(item, index) {
+      
+      var cellClicked = function(row, column, cellID){
+        var date = shiftDates[row];
+        var time = shiftTimes[column];
+        var content = $('#message-'+cellID).html();
+        if(content==="Unassigned"){
+          $('#message-'+cellID).html("Assinging");
+          $("#"+cellID).removeClass("unassigned");
+          $("#"+cellID).addClass("assigning");
+
+
+          var obj = {};
+          obj[date]=time;
+          shiftsToAssign.push(obj);
+        } else if (content==="Assinging"){
+
+          $('#message-'+cellID).html("Unassigned");
+          $("#"+cellID).addClass("unassigned");
+          $("#"+cellID).removeClass("assigning");
+
+          if(shiftsToAssign.length===1){
+            shiftsToAssign = [];
+          } else {
+            var posToRemove = -1;
+
+            for(var i in shiftsToAssign){
+              
+             for(var key in shiftsToAssign[i]){
+                if(key === date && shiftsToAssign[i][key]===time){
+                  posToRemove = i;
+                }
+             }
+            }
+            shiftsToAssign.splice(posToRemove,1);
+          }
+        } 
+      }
+
+      var row =  columnValue;
+      var column = index;
+
+      var cellID ="r"+row+"c"+column;
+
+      if(item==='Unassigned'){
+        return (              
+        <button id={cellID} key={index} onClick={cellClicked.bind(null, row, column, cellID)} className={'time-slot unassigned'}> 
+          <span id={'message-'+cellID}>{item}</span> 
+        </button> 
+          )
+      }else{
+        return (
+        <button id={cellID} key={index} onClick={cellClicked.bind(null, row, column, cellID)} className={'time-slot assigned'}> 
+          <span id={'message-'+cellID}>{item}</span> 
+        </button> 
+        )
+      }
+    }
+    
+    var shiftsAssigned = [];
+    for(var dates in this.props.shifts){
+        if(dates!=".key"){
+          shiftDates.push(dates);
+          var shifts = this.props.shifts[dates];
+        
+          for(var times in shifts){
+            shiftsAssigned.push(shifts[times]);
+            shiftTimes.push(times);
+          }
+      }
+    }
+    
+    if(columnValue===6){
+        columnValue=0;
+      }else{
+        columnValue++;
+      }
+    return <div className="rotaRow"><button className="time-slot">{this.props.date}</button>{shiftsAssigned.map(createCell)}</div>;
+      
+  }
+});
+
+var Rota = React.createClass({
+  mixins: [ReactFireMixin],
+
+  getInitialState: function() {
     return {
-      weekVal: '',
-      yearVal: '',
-      monDate: '',
-      tuesDate: '',
-      wedDate: '',
-      thursDate: '',
-      friDate: '',
-      satDate: '',
-      sunDate: '',
-      shiftDates: '',
-      shiftTimes: '',
-      shiftEmployees: '',
-      assignEmployee: '',
-      showModal: false,
-      shiftsToAssign:[],
-      companyEmployeesID: [],
-      showAssign: false,
-      userRole: '',
-      holidaysApproved: [],
-    }
+      shifts: []
+    };
   },
 
-  componentWillMount(){
+  componentWillMount: function() {
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum), "shifts");
+  },
+  
 
-    this.companyRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company'));
-    this.companyRef.once("value", function(companySnapshot) {
-      var employees = companySnapshot.val().Employees;
-      var employeeIDStruct = {};
-      for(var id in employees)
-      {
-           
-            var fullName = employees[id].Name;
-            var name = "";
+  render: function() {
+    
+    function changeEmployee(e){
+      assignEmployee = e.target.value;
+    }
 
-            for(var j =0; j<fullName.length; j++){
-              if(fullName.charAt(j)!=' '){
-               name += fullName.charAt(j);
-              }else{
-                break;
-              }                       
+    function createEmployeeList(name){
+     // var name = this.state.companyEmployeesID[id];
+
+     return <option key={name}>{name}</option>;
+    }
+
+    function assignShifts(){
+
+      if(assignEmployee.length>0){
+        for(var i in shiftsToAssign){
+          var shiftDetails= shiftsToAssign[i];
+          for(var date in shiftDetails){
+            if(date!=".key"){
+              var shiftTime = shiftDetails[date];
+              var shiftDate = date+"-2017";
+              var dow = moment(shiftDate, "DD-MM-YYYY").day();
+
+              console.log("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
+              
+              var obj ={};
+              var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
+              obj[shiftTime]=assignEmployee;
+              
+              shiftRef.update(obj);
             }           
-            
-            employeeIDStruct[id] = name;
-            
-      }
-      this.setState({
-        companyEmployeesID: employeeIDStruct,
-      });
 
-    }.bind(this));
-
-    this.shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts/'+this.param('company')+'/allocations');
-    this.shiftRef.on("child_added", function(dataSnapshot) {
-
-      var p = dataSnapshot.val();
-      var tShiftDates = [];
-      var tShiftTimes = [];
-      var tShiftEmployees = [];
-
-      for (var i in p){
-          var times = p[i];
-          for(var j in times){
-            tShiftDates.push(i);
-            tShiftTimes.push(j);
-            tShiftEmployees.push(times[j].employee);
-          }
-      }
-
-      this.setState({
-        shiftDates: tShiftDates,
-        shiftTimes: tShiftTimes,
-        shiftEmployees: tShiftEmployees          
-      });
-    }.bind(this));
-
-    this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+this.param('id'));
-    this.employeeRef.on("value", function(dataSnapshot) {
-      var userType = '';
-
-      if(dataSnapshot.val().EmployerOf){
-        userType = "Employer";
-      }else{
-        userType = "Employee";
-      }
-
-      this.setState({
-        userRole: userType,
-      });
-      
-    }.bind(this));
-
-    this.setState({
-      weekVal: moment().week(),
-      yearVal: moment().year(),
-      monDate: moment([moment().year()]).day("Monday").week(moment().week()).format("DD-MM-YYYY"),
-      tuesDate: moment([moment().year()]).day("Tuesday").week(moment().week()).format("DD-MM-YYYY"),
-      wedDate: moment([moment().year()]).day("Wednesday").week(moment().week()).format("DD-MM-YYYY"),
-      thursDate: moment([moment().year()]).day("Thursday").week(moment().week()).format("DD-MM-YYYY"),
-      friDate: moment([moment().year()]).day("Friday").week(moment().week()).format("DD-MM-YYYY"),
-      satDate: moment([moment().year()]).day("Saturday").week(moment().week()).format("DD-MM-YYYY"),
-      sunDate: moment([moment().year()]).day("Sunday").week(moment().week()).format("DD-MM-YYYY"),
-    });
-
-    this.approvedHolidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+this.param('company')+'/holidays/approved');
-    this.approvedHolidayRef.once("value", function(dataSnapshot) {
-      var holidays = dataSnapshot.val();
-      var tempDates = {};
-      var dateOfHoliday = "";
-      var keys = [];
-
-      for(var key in holidays){ 
-        var employeeID = holidays[key];
-        dateOfHoliday = employeeID.dates[0];
-        keys.push(key);
-        
-        
-      }
-
-      tempDates[dateOfHoliday] = keys;
-      console.log(tempDates);
-
-      this.setState({
-        holidaysApproved : tempDates,
-      });
-    }.bind(this));
-
-  },
-
-  param: function(name, url) {
-    if (!url) {
-      url = window.location.href;
-    }
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, " "));
-    },
-
-  changeWeekDec: function(){
-    var tempWeekVal = this.state.weekVal;
-    var tempYearVal = this.state.yearVal;
-    
-
-    if(tempWeekVal === 1){
-      tempYearVal -= 1;
-      tempWeekVal = moment([tempYearVal]).weeksInYear();
-    } else{
-      tempWeekVal -= 1;
-    }
-
-    this.setState({
-      weekVal: tempWeekVal,
-      yearVal: tempYearVal,
-      monDate: moment([tempYearVal]).day("Monday").week(tempWeekVal).format("DD-MM-YYYY"),
-      tuesDate: moment([tempYearVal]).day("Tuesday").week(tempWeekVal).format("DD-MM-YYYY"),
-      wedDate: moment([tempYearVal]).day("Wednesday").week(tempWeekVal).format("DD-MM-YYYY"),
-      thursDate: moment([tempYearVal]).day("Thursday").week(tempWeekVal).format("DD-MM-YYYY"),
-      friDate: moment([tempYearVal]).day("Friday").week(tempWeekVal).format("DD-MM-YYYY"),
-      satDate: moment([tempYearVal]).day("Saturday").week(tempWeekVal).format("DD-MM-YYYY"),
-      sunDate: moment([tempYearVal]).day("Sunday").week(tempWeekVal).format("DD-MM-YYYY")
-    });
-
-
-  },
-
-  changeWeekInc: function(){
-    var tempWeekVal = this.state.weekVal;
-    var tempYearVal = this.state.yearVal;
-
-    if(tempWeekVal === moment([tempYearVal]).weeksInYear()){
-      tempWeekVal = 1;
-      tempYearVal += 1;
-    } else{
-      tempWeekVal += 1;
-    }
-
-    this.setState({
-      weekVal: tempWeekVal,
-      yearVal: tempYearVal,
-      monDate: moment([tempYearVal]).day("Monday").week(tempWeekVal).format("DD-MM-YYYY"),
-      tuesDate: moment([tempYearVal]).day("Tuesday").week(tempWeekVal).format("DD-MM-YYYY"),
-      wedDate: moment([tempYearVal]).day("Wednesday").week(tempWeekVal).format("DD-MM-YYYY"),
-      thursDate: moment([tempYearVal]).day("Thursday").week(tempWeekVal).format("DD-MM-YYYY"),
-      friDate: moment([tempYearVal]).day("Friday").week(tempWeekVal).format("DD-MM-YYYY"),
-      satDate: moment([tempYearVal]).day("Saturday").week(tempWeekVal).format("DD-MM-YYYY"),
-      sunDate: moment([tempYearVal]).day("Sunday").week(tempWeekVal).format("DD-MM-YYYY")
-    });
-
-  },
-
-  handler: function(component, event) {
-    if(this.state.userRole==='Employer'){
-      if(this.state.shiftsToAssign.includes(component)){
-
-        var tempArr = this.state.shiftsToAssign;
-
-        for(var i = tempArr.length; i--;){
-          if(tempArr[i]===component){
-            tempArr.splice(i, 1);
           }
         }
-
-        this.setState({
-          shiftsToAssign: tempArr,         
-        });
-
-        var idOfButton = '#'+component;
-
-        $(idOfButton).addClass("time-slot-unassigned");
-        $(idOfButton).removeClass("time-slot-assigning");
-        $('#message-'+component).html("Not Assigned");
-
-
-        if(tempArr.length===0){
-          this.setState({
-            showAssign: false,         
-          });
-        }
-
-      }else{
-        var idOfButton = '#'+component;
-
-        $(idOfButton).removeClass("time-slot-unassigned");
-        $(idOfButton).addClass("time-slot-assigning");
-        $('#message-'+component).html("");
-
-        this.state.shiftsToAssign.push(component);
-        this.setState({
-            showAssign: true,         
-          });
       }
-    }
-  },
-
-  changeEmployee: function(event){
-    this.setState({assignEmployee: event.target.value});
-  },
-
-  getRowAndColumnValues: function(id){
-    var rValue="";
-    var cValue="";
-
-    for(var j=0; j<id.length; j++){
-        if(id.charAt(j)==='c'){
-
-          rValue = id.substring(0, j);
-          cValue = id.substring(j, id.length);
-        }
-      }
-
-     var time = rowMap[rValue];
-
-     var date = "";
-      
-      //console.log("cValue: " + cValue);
-      if(cValue==='c1'){
-        date = this.state.sunDate;
-      }else if(cValue==='c2'){
-        date = this.state.monDate;
-      }else if(cValue==='c3'){
-        date = this.state.tuesDate;
-      }else if(cValue==='c4'){
-        date = this.state.wedDate;
-      }else if(cValue==='c5'){
-        date = this.state.thursDate;
-      }else if(cValue==='c6'){
-        date = this.state.friDate;
-      }else {
-        date = this.state.satDate;
-      }
-
-      return [time, date];
-  },
-
-  assignShifts: function(){
-
-    if(this.state.assignEmployee.length>0){
-
-      for(var i = 0; i<this.state.shiftsToAssign.length; i++){
-        var id = this.state.shiftsToAssign[i];
-
-        var timeAndDate = this.getRowAndColumnValues(id);
-
-        var time = timeAndDate[0];
-        var date = timeAndDate[1];
-        
-
-        if(time.length > 0 && date.length > 0){
-          firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
-            employee: this.state.assignEmployee,
-          });
-
-        }
-
-        var idOfButton = '#'+id;
-        $(idOfButton).addClass("time-slot-assigned");
-        $(idOfButton).removeClass("time-slot-assigning");
-        $('#message-'+id).html(this.state.assignEmployee);
-      }
-
-      this.setState({
-        shiftsToAssign: [],
-        showAssign: false,
-      });
-    }
-  },
-
-  getList: function(id){
-      var name = this.state.companyEmployeesID[id];
-
-      return <option key={id}>{name}</option>;
-
-  },
-
-  getRandomInt: function(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min)) + min;
-  },
-
-  autoSchedule: function(){
-    var holidaysBooked = this.state.holidaysApproved;
-    console.log(holidaysBooked);
-    
-    var idsToBeAssigned = $('.time-slot-unassigned').map(function() {
-      return $(this).attr('id');
-    });
-
-    var employeeList = [];
-    for(i in this.state.companyEmployeesID){
-      employeeList.push(this.state.companyEmployeesID[i]);
-    } 
-
-    for(var i =0; i<idsToBeAssigned.length; i++){
-      
-      var employeesAvailable = employeeList.slice(); //copying array by value ---> not reference
-
-      var id = idsToBeAssigned[i];
-      var timeAndDate = this.getRowAndColumnValues(id);
-      var time = timeAndDate[0];
-      var date = timeAndDate[1];
-      
-     
-
-      if(holidaysBooked[date]){
-
-        var employeeArr = holidaysBooked[date];
-        for(var employee in employeeArr){
-          var name = this.state.companyEmployeesID[employeeArr[employee]];
-          var index = employeesAvailable.indexOf(name);
-          if (index > -1) {
-              employeesAvailable.splice(index, 1);
-          }
-        }
-      }else{
-        employeesAvailable = employeeList;
-      }
-
-      var rand = this.getRandomInt(0,employeesAvailable.length);
-      var employee = employeesAvailable[rand];
-
-      if(time.length > 0 && date.length > 0){
-        firebase.database().ref('shifts/'+this.param('company')+'/allocations/'+date+'/'+time).set({
-          employee: employee,
-        });
-      }
-
-      $("#"+id).removeClass("time-slot-unassigned");
-      $("#"+id).addClass("time-slot-assigned");
-      $("#message-"+id).html(employee);
+      shiftsToAssign=[]; 
     }
     
-  },
-
-   render() {
-    //$(".assigningRow").hide();
-    var employeeList = [];
-
-    for(var i in this.state.companyEmployeesID){
-      employeeList.push(i);
-    }
 
     return (
       <div>
-        <div>{this.props.children}</div>
-        <Well className='rota-well' style={style.well}>
-          <div>
-          
-            <div className="row assigningRow">
-            { this.state.showAssign ?  
-              <div>
-                <div className="col assigning">
-                  <select onChange={this.changeEmployee} value={this.state.assignEmployee}>
-                    <option>-- Select Employee --</option>
-                    {employeeList.map(this.getList)}
-                  </select>
-                </div>
-
-                <div className="col assigning">
-                  <button onClick={this.assignShifts}>Assign</button>
-                </div> 
-              </div> : 
-
-
-              <div>
-                { this.state.userRole === 'Employer' ?
-                  <button onClick={this.autoSchedule}>Auto Assign</button> :null
-                }
-              </div>
-
-            }
-            </div>
-            
-            <Table id="calendarView" responsive>
-                  <thead>
-                    <tr>
-                      <th style={style.times}>
-                        <div style={style.weekValue}>
-                          <a style={style.weekButton} onClick={this.changeWeekDec}><FontAwesome name='arrow-left' /></a>
-                          <a style={style.weekButton} onClick={this.changeWeekInc}><FontAwesome name='arrow-right' /></a>
-                        </div>
-                      </th>
-                      <th style={style.tableHeader}>{this.state.sunDate}</th>
-                      <th style={style.tableHeader}>{this.state.monDate}</th>
-                      <th style={style.tableHeader}>{this.state.tuesDate}</th>
-                      <th style={style.tableHeader}>{this.state.wedDate}</th>
-                      <th style={style.tableHeader}>{this.state.thursDate}</th>
-                      <th style={style.tableHeader}>{this.state.friDate}</th>
-                      <th style={style.tableHeader}>{this.state.satDate}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <Row handler={this.handler}  time={"8.00"}  r={"r1"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"9.00"}  r={"r2"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"10.00"} r={"r3"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"11.00"} r={"r4"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"12.00"} r={"r5"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"13.00"} r={"r6"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"14.00"} r={"r7"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"15.00"} r={"r8"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"16.00"} r={"r9"}  week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"17.00"} r={"r10"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"18.00"} r={"r11"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"19.00"} r={"r12"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"20.00"} r={"r13"} week={this.state.weekVal} year={this.state.yearVal} />
-                    <Row handler={this.handler}  time={"21.00"} r={"r14"} week={this.state.weekVal} year={this.state.yearVal} />
-
-                  </tbody>
-            </Table>
+        <div className="employeeList">
+          <select onChange={changeEmployee} value={assignEmployee}>
+            <option>-- Select Employee --</option>
+              {employeesList.map(createEmployeeList)}
+          </select>
+          <button onClick={assignShifts}>Assign</button>
+        </div>
+        <div id="rotaContainer">
+          <div className="rotaRow">
+            <button className="time-slot">times:</button>
+            <button className="time-slot">9:00</button>
+            <button className="time-slot">10:00</button>
+            <button className="time-slot">11:00</button>
+            <button className="time-slot">12:00</button>
+            <button className="time-slot">13:00</button>
+            <button className="time-slot">14:00</button>
+            <button className="time-slot">15:00</button>
+            <button className="time-slot">16:00</button>
+            <button className="time-slot">17:00</button>
+            <button className="time-slot">18:00</button>
+            <button className="time-slot">19:00</button>
+            <button className="time-slot">20:00</button>
+            <button className="time-slot">21:00</button>
           </div>
-        </Well>         
+          <ShiftRow row ={"0"} shifts={ this.state.shifts[0] }  date = { moment(2017, "YYYY").day(0).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"1"} shifts={ this.state.shifts[1] }  date = { moment(2017, "YYYY").day(1).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"2"} shifts={ this.state.shifts[2] }  date = { moment(2017, "YYYY").day(2).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"3"} shifts={ this.state.shifts[3] }  date = { moment(2017, "YYYY").day(3).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"4"} shifts={ this.state.shifts[4] }  date = { moment(2017, "YYYY").day(4).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"5"} shifts={ this.state.shifts[5] }  date = { moment(2017, "YYYY").day(5).week(9).format("ddd Do MMM") } />
+          <ShiftRow row ={"6"} shifts={ this.state.shifts[6] }  date = { moment(2017, "YYYY").day(6).week(9).format("ddd Do MMM") } />
+        </div>
       </div>
     );
   }
 });
+
+export default React.createClass({
+  render() {
+      return (
+          <div>
+            <div>{this.props.children}</div>
+            <Well className='rota-well'>
+              <div>
+                <Rota/> 
+              </div>
+            </Well>         
+          </div>
+        );
+    }
+  });
