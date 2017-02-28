@@ -27,7 +27,7 @@ for(var week=1; week<=weeks; week++){
     
     var date = moment(year, "YYYY").day(day).week(week);
     for(var i in hours){
-      var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/'+year+'/'+week+'/'+count+'/'+date.format("DD-MM"));
+      var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts/'+param('company')+'/'+year+'/'+week+'/'+count+'/'+date.format("DD-MM"));
       shiftRef.set({  '900' :'Unassigned',
                       '1000':'Unassigned',
                       '1100':'Unassigned',
@@ -163,6 +163,7 @@ var Rota = React.createClass({
 
   getInitialState: function() {
     return {
+      weekNum: '10',
       shifts: [],
       employeeToAssign: "",
       companyEmployees: [],
@@ -171,7 +172,7 @@ var Rota = React.createClass({
   },
 
   componentWillMount: function() {
-    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum), "shifts");
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekNum), "shifts");
 
     /*
      * Populating Object with Employee ID's and Names.
@@ -233,10 +234,10 @@ var Rota = React.createClass({
               /*
                * REMOVE THIS
                */
-              console.log("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
+              console.log("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekNum+"/"+dow+"/"+date);
               
               var obj ={};
-              var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/ShiftsTemp/0TI1WWQ/2017/"+weekNum+"/"+dow+"/"+date);
+              var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekNum+"/"+dow+"/"+date);
               obj[shiftTime]=this.state.employeeToAssign;
               
               shiftRef.update(obj);
