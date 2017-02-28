@@ -294,6 +294,7 @@ body{
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
+  padding: 20px;
 }
 
 .assigningRow{
@@ -311,8 +312,8 @@ body{
 .weekArrows{
   color: black;
   cursor:pointer;
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: 5px;
+  margin-left: 5px;
 
 }
 

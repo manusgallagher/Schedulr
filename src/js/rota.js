@@ -284,7 +284,7 @@ var Rota = React.createClass({
           <div className="rotaRow">
             <button id="arrowsAndWeekVal">
                   <a className="weekArrows" onClick={this.decWeek}><FontAwesome name='arrow-left' /></a>
-                  {this.state.weekVal}
+                  Week {this.state.weekVal}
                   <a className="weekArrows" onClick={this.incWeek}><FontAwesome name='arrow-right' /></a>
             </button>
             <button className="time-slot">9:00</button>
