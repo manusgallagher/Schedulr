@@ -245,7 +245,8 @@ var Rota = React.createClass({
           }
         }
       }
-      shiftsToAssign=[]; 
+      shiftsToAssign=[];
+      this.state.showDropDown = false;
     },
   
 
