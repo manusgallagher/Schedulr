@@ -11,25 +11,17 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
   const style = {
     well: {
       textAlign: 'center',
-      width: '60%',
-      height: '70%',
+      width: '30%',
+      height: 'auto',
       position: 'fixed',
       top: '50%',
       left: '50%',
       /* bring your own prefixes */
       transform: 'translate(-50%, -50%)',
     },
-    image: {
-      width: '40%',
-    },
     name: {
       color: '#B71C1C',
       fontWeight: 'bold',
-    },
-    welcomeText: {
-      display:  'inline-block',
-      textAlign: 'left',
-      fontSize: '120%',
     },
     profile: {
       textAlign: 'left',
@@ -43,19 +35,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
       paddingTop: '.60em',
       paddingBottom: '.60em',
     },
-    buttonRow:{
-      backgroundColor: 'red'
-    },
     userContent:{
       paddingTop: '1%',
       textAlign: 'center',
-      width: '50%',
-      float: 'right',
-    },
-    profilepic:{
-      float: 'left',
-      textAlign: 'center',
-      width: '50%',
+      width: '100%',
     },
     image:{
       width: '150px',
@@ -206,12 +189,8 @@ export default React.createClass({
       <div>
         <div>{this.props.children}</div>
         <Well style={style.well}>
-          <div style={style.profilepic}>
-            <img style={style.image} src ="img/profilepic.jpg" />
-            <br/>
-            <a>Upload New Profile Picture</a>
-          </div>
           <div style={style.userContent}>
+            <h3>Update Details: </h3>
             <table style={style.profile}>
               <tbody>
                 <tr>
