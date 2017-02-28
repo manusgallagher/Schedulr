@@ -5,7 +5,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "start": "webpack-dev-server --inline --content-base dist",
-    "go": "service nginx stop && git pull origin master && npm install && webpack && service nginx start"
+    "install": "service nginx stop && git pull origin master && npm install && webpack && service nginx start"
 
   },
   "author": "Manus Gallagher",
