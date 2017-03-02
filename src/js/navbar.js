@@ -36,6 +36,19 @@ const signOut = () => {
 
 
 export default React.createClass({
+  getInitialState: function () {
+    return {
+      name: "",
+    }
+  },
+  componentWillMount(){
+     var employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+this.param("id"));
+      employeeRef.on("value", function(dataSnapshot) {
+
+        this.setState({ name: dataSnapshot.val().Name, });
+
+      }.bind(this));
+  },
   param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -48,20 +61,6 @@ export default React.createClass({
       return decodeURIComponent(results[2].replace(/\+/g, " "));
   },
 
-  getName: function(){
-    var id = this.param("id");
-    var name = "";
-
-    var employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+id);
-    employeeRef.on("value", function(dataSnapshot) {
-
-      name = dataSnapshot.val().Name;
-
-    }.bind(this));
-
-    return name;
-  },
-
   render() {
 
     return (
@@ -71,7 +70,7 @@ export default React.createClass({
             title={<img src={"img/logo-nav.png"}/> }
             iconElementRight={
                 <div>
-                  <span style={styles.welcome}>Hi {this.getName()}</span>
+                  {this.state.name.length !=0 ? <span style={styles.welcome}>Hi {this.state.name}</span> : null }
                   <RaisedButton 
                     onClick={signOut} 
                     label="Sign Out" 

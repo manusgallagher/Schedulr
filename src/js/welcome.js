@@ -1,22 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
-import { Well } from 'react-bootstrap';
+import { Well, Row, Col } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 
   const style = {
-    welcomeWell: {
-      textAlign: 'center',
-      width: '40%',
-      height: '50%',
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      /* bring your own prefixes */
-      transform: 'translate(-50%, -50%)',
-    },
-    image: {
-      width: '40%',
-    },
     name: {
       color: '#B71C1C',
       fontWeight: 'bold',
@@ -25,13 +13,45 @@ import { Well } from 'react-bootstrap';
       display: 'inline-block',
       textAlign: 'left',
       fontSize: '120%',
-    }
+    },
+
+    tableCells:{
+      fontWeight: 'bold',
+      marginRight: '1%',
+      width: '11.2%',
+      textAlign: 'center',
+      padding: '0',
+    },
+
+    tableCellsTimes:{
+      fontWeight: 'bold',
+      marginRight: '1%',
+      width: '10%',
+      textAlign: 'right',
+      padding: '0',
+    },
+
+    availButton:{
+      margin: '0 auto',
+    },
   };
 
-var companyName = "";
 export default React.createClass({
+  getInitialState: function () {
+    return {
+      companyName: "",
+    }
+  },
   componentWillMount(){
-    this.getCompanyName();
+    var companyID = this.param('company');
+
+    if(companyID.length > 0){
+      new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + companyID).on('value', function(snap) {
+        this.setState({companyName: snap.val().Name,}) 
+      }.bind(this));
+
+      
+    }
   },
   param: function(name, url) {
     if (!url) {
@@ -45,40 +65,187 @@ export default React.createClass({
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     },
 
-  getCompanyName: function(){
-    var companyID = this.param('company');
-
-    if(companyID.length > 0){
-      new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + companyID).on('value', function(snap) {
-        companyName = snap.val().Name; 
-      });
-     }
-  },
-
 
   render() {
     return (
       <div>
         <div>{this.props.children}</div>
-        <Well style={style.welcomeWell}>
-          <img src = "/img/logo-nav.png" style={style.image} />
-           <br/>
-           <br/>
-           <div id = "welcomeMessage" style={style.welcomeText}>
-            Welcome to <span id="compName" style={style.name}>{companyName}</span>.
-            <br/>
-            <br/>
-            This is your Company Space;
-            <br/>
-            Here you will be assigned hours by your 
-            <br/>
-            Employer and be able to request for
-            <br/>
-            days off.
+        <div id="appPosition">
+          <div className="col-sm-3">
+            <div className="well" id="welcomeWell">
+              { this.state.companyName.length != 0 ?
+                <div id = "welcomeMessage">
+                  Welcome to <span id="compName" style={style.name}>{this.state.companyName}</span>.
+                </div>
+                      : <div className="loadingSpinner">
+                          <FontAwesome
+                              name='spinner'
+                              spin
+                            /> 
+                        </div>}
+            </div>
           </div>
-        </Well>         
+            <div className="col-sm-9">
+              <div className="well" id="availibilitesWell">
+                { this.state.companyName.length != 0 ?
+                <div>
+                  <h4>Save Your Weekly Availabilities:</h4>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}></div>
+                    <div className="col-sm-1" style={style.tableCells}>Monday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Tuesday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Wednesday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Thursday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Friday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Saturday</div>
+                    <div className="col-sm-1" style={style.tableCells}>Sunday</div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>09:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>10:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>11:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>12:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>13:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>14:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>15:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>16:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>17:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>18:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>19:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>20:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <div className="row">
+                    <div className="col-sm-1" style={style.tableCellsTimes}>21:00</div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                    <div className="col-sm-1" style={style.tableCells}><input type="checkbox" /></div>
+                  </div>
+                  <br/>
+                  <button style={style.availButton}>Save Availabilities</button>
+                </div>
+                : <div className="loadingSpinner">
+                          <FontAwesome
+                              name='spinner'
+                              spin
+                            /> 
+                        </div>}
+              </div>
+            </div>
+          </div>
+
+          <div id="footer"/>    
       </div>
+
     );
   }
 });
-

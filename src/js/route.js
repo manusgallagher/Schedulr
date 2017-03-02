@@ -117,7 +117,7 @@ firebase.auth().onAuthStateChanged(function(user) {
               /*You Don't Need to Add User Details...*/
               if(snap.val().EmployeeOf){
                 var companyid = snap.val().EmployeeOf.UniqueID;
-                var newUrl =encodeURI("/rota?id="+user.uid+"&company="+companyid);
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);
@@ -125,7 +125,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 
               }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
-                var newUrl =encodeURI("/rota?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
                 
                 setTimeout(function (){
                   window.openAppRoute(newUrl);

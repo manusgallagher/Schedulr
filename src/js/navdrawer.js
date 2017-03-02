@@ -56,7 +56,7 @@ export default React.createClass({
                       className="drawerFA"
                     />
                     <span className="nav-text">
-                      Holidays
+                      Request Holidays
                     </span>
                   </Link>
                 </li>                

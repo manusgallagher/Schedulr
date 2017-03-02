@@ -1,3 +1,7 @@
+html, body{
+  overflow-y: hidden;
+}
+
 .LoginModal{
 	text-align: center;
 }
@@ -65,9 +69,6 @@
     color: #a6a64c;
 }
 
-body {
-}
-
 .active{
 	color:#f4f4e9;
 }
@@ -127,7 +128,7 @@ top:0;
 bottom:0;
 height:100%;
 left:0;
-width:60px;
+width:4.4%;
 overflow:hidden;
 padding-top:64px;
 -webkit-transition:width .05s linear;
@@ -284,13 +285,10 @@ body{
 }
 
 .rota-well{
-  width: 80%;
-  height:auto;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  /* bring your own prefixes */
-  transform: translate(-50%, -50%);
+  width: 85%;
+  margin-top: 1%;
+  margin-left: 6%;
+  
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
@@ -321,18 +319,48 @@ body{
 #arrowsAndWeekVal     {
   width:10%;
   height: 5em;
-  position: relative;
-  
+  position: relative;  
   margin-right: 2px; 
   color:black; 
   cursor:default; 
   border-radius:5px;
   margin-bottom: -1%;
   display: inline-block;
-
   padding: 0;
   border: none;
   background: none;
 }
 
+/*
+ * Do Not Edit - For the positioning on pages
+ */
+#appPosition{
+  margin-top: 10px;
+  margin-left: 4.4%;
+  width: 95.6%;
+  min-height:100%;
+  position:absolute; 
+}
 
+#footer{
+  position:absolute; 
+  bottom:0; 
+  width:100%;
+}
+/*
+ * You Can Now Edit
+ */
+
+.loadingSpinner{
+  text-align: center;
+  font-size: 150%;
+}
+
+#availibilitesWell{
+  text-align: center;
+}
+
+#availibilitesWell h4{
+  text-align: left;
+  font-weight: bold;
+}

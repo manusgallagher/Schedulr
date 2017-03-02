@@ -279,6 +279,7 @@ var Rota = React.createClass({
             </select>
             <button onClick={this.assignShifts}>Assign</button>
           </div> : null}
+        {this.state.shifts.length != 0 ?
         <div id="rotaContainer">
           <div className="rotaRow">
             <button id="arrowsAndWeekVal">
@@ -310,6 +311,12 @@ var Rota = React.createClass({
           <ShiftRow row = { 6 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(6).week(this.state.weekVal).format("ddd Do MMM") } />
          
         </div>
+        : <div className="loadingSpinner">
+                          <FontAwesome
+                              name='spinner'
+                              spin
+                            /> 
+                        </div>}
       </div>
     );
   }
@@ -318,14 +325,17 @@ var Rota = React.createClass({
 export default React.createClass({
   render() {
       return (
-          <div>
-            <div>{this.props.children}</div>
+        <div>
+          <div>{this.props.children}</div>
+          <div id="appPosition">
             <Well className='rota-well'>
               <div>
                 <Rota/> 
               </div>
-            </Well>         
-          </div>
+            </Well> 
+            <div id="footer"/>    
+          </div>        
+        </div>
         );
     }
   });
