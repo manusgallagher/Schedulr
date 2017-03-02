@@ -53,7 +53,7 @@ export default React.createClass({
       <div>
         <div>{this.props.children}</div>
           <div id="appPosition">
-            {this.state.userType==='Employee' ?
+            {this.state.userType==='Employer' ?
               <Well>
                 <p>This is your admin page</p>
               </Well>
