@@ -76,6 +76,9 @@ export default React.createClass({
               { this.state.companyName.length != 0 ?
                 <div id = "welcomeMessage">
                   Welcome to <span id="compName" style={style.name}>{this.state.companyName}</span>.
+                  <br/>
+                  <br/>
+                  **Insert Content Here**
                 </div>
                       : <div className="loadingSpinner">
                           <FontAwesome

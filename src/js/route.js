@@ -10,6 +10,7 @@ import Welcome from './welcome'
 import Rota from './rota'
 import Holidays from './holidays'
 import Profile from './profile'
+import Admin from './admin'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
@@ -30,6 +31,9 @@ ReactDOM.render((
     </Route>
     <Route component={Holidays}>
       <Route path="/holidays" component={NavBar} />
+    </Route>
+    <Route component={Admin}>
+      <Route path="/admin" component={NavBar} />
     </Route>
     <Route component={Profile}>
       <Route path="/profile" component={NavBar} />

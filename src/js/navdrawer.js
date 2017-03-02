@@ -4,6 +4,30 @@ import FontAwesome from 'react-fontawesome';
 import { Link } from 'react-router';
 
 export default React.createClass({
+  getInitialState: function () {
+    return {
+      userType: '',
+    }
+  },
+
+  componentWillMount(){
+    //Get user type:
+    this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+this.param('id'));
+    this.employeeRef.on("value", function(dataSnapshot) {
+      var userType = '';
+
+      if(dataSnapshot.val().EmployerOf){
+        userType = "Employer";
+      }else{
+        userType = "Employee";
+      }
+
+      this.setState({
+        userType: userType,
+      });
+      
+    }.bind(this));
+  },
   param: function(name, url) {
     if (!url) {
       url = window.location.href;
@@ -59,7 +83,20 @@ export default React.createClass({
                       Request Holidays
                     </span>
                   </Link>
-                </li>                
+                </li> 
+                {this.state.userType==='Employer' ?
+                <li>
+                  <Link to={this.getLink('admin')}>
+                    <FontAwesome
+                      name='users'
+                      className="drawerFA"
+                    />
+                    <span className="nav-text">
+                      Admin
+                    </span>
+                  </Link>
+                </li> : null } 
+
               </ul>
               <ul className="logout">
                 <li>
