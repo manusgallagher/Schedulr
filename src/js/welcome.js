@@ -181,7 +181,7 @@ export default React.createClass({
           }
         }.bind(this));
         
-        console.log(this.state.availabilities[6]);
+        console.log(this.state.requirements[6]);
         /**/
     return (
       <div>
