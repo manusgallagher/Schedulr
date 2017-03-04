@@ -111,7 +111,7 @@ var ShiftRequirementsRow = React.createClass({
               new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
 
             }else{
-              availObj[time]='false';
+              availObj[time]=false;
               new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
             }
           }
