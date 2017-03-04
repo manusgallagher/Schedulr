@@ -50,38 +50,6 @@ import Admin from './admin'
       return decodeURIComponent(results[2].replace(/\+/g, " "));
     };
 
-    /*
-     * CODE USED TO ASSIGN AVAILABILITIES
-     *
-     */ 
-        this.employeeAvailabilityRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')).once('value', function(snap) {
-          if(snap.val().availabilities){
-            //console.log(snap.val().availabilities[0]);
-          }else{
-            var availabilitiesArr = [];
-            
-
-            for(var day=0; day<7; day++){
-              var obj = {};
-              var dailyAvailabilitiesArr =[];
-              var dayShifts = this.state.requirements[day];
-
-              for(var i in dayShifts){
-                if(dayShifts[i]!='No'){
-                  obj[i] = false;
-                }
-                  
-              } 
-              new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')+"/availabilities/"+day).update(obj);
-                   
-            }
-             
-          }
-        }.bind(this));
-        
-    
-        /**/
-
 var uniqueTimes = [];
 var RowHeaders = React.createClass({
 
@@ -186,6 +154,37 @@ export default React.createClass({
 
 
   render() {
+    /*
+     * CODE USED TO ASSIGN AVAILABILITIES
+     *
+     */ 
+        this.employeeAvailabilityRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')).once('value', function(snap) {
+          if(snap.val().availabilities){
+            //console.log(snap.val().availabilities[0]);
+          }else{
+            var availabilitiesArr = [];
+            
+
+            for(var day=0; day<7; day++){
+              var obj = {};
+              var dailyAvailabilitiesArr =[];
+              var dayShifts = this.state.requirements[day];
+
+              for(var i in dayShifts){
+                if(dayShifts[i]!='No'){
+                  obj[i] = false;
+                }
+                  
+              } 
+              new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')+"/availabilities/"+day).update(obj);
+                   
+            }
+             
+          }
+        }.bind(this));
+        
+    
+        /**/
 
     return (
       <div>
