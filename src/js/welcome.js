@@ -119,10 +119,6 @@ var AvailabilityRow = React.createClass({
         status.push("No");
       }
     }
-
-    if(_this.props.row===6){
-      console.log(this.props.data);
-    }
     
 
     return (<div className="row">
@@ -141,6 +137,7 @@ export default React.createClass({
       availabilities: [],
       requirements: [],
       availabilities: [],
+      userType: '',
     }
   },
   componentWillMount(){
@@ -149,6 +146,22 @@ export default React.createClass({
   
       this.shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company')).once('value', function(snap) {
         this.setState({companyName: snap.val().Name,}) 
+      }.bind(this));
+
+      this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+param('id'));
+      this.employeeRef.on("value", function(dataSnapshot) {
+        var userType = '';
+
+        if(dataSnapshot.val().EmployerOf){
+          userType = "Employer";
+        }else{
+          userType = "Employee";
+        }
+
+        this.setState({
+          userType: userType,
+        });
+        
       }.bind(this));
       
     
@@ -159,7 +172,7 @@ export default React.createClass({
     /*
      * CODE USED TO ASSIGN AVAILABILITIES
      *
-     */ 
+     *
         this.employeeAvailabilityRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')).once('value', function(snap) {
           if(snap.val().availabilities){
             //console.log(snap.val().availabilities[0]);
@@ -203,18 +216,21 @@ export default React.createClass({
             </div>  
           </div>
             <div className="col-sm-9">
-            
-              <div className="well" id="availibilitesWell">
-                <legend><h4>Save Your Weekly Availabilities:</h4></legend>
-                <RowHeaders data={this.state.availabilities} />
-                <AvailabilityRow data={this.state.availabilities[0]} row={0} day={"Monday"} />
-                <AvailabilityRow data={this.state.availabilities[1]} row={1} day={"Tuesday"} />
-                <AvailabilityRow data={this.state.availabilities[2]} row={2} day={"Wednesday"} />
-                <AvailabilityRow data={this.state.availabilities[3]} row={3} day={"Thursday"} />
-                <AvailabilityRow data={this.state.availabilities[4]} row={4} day={"Friday"} />
-                <AvailabilityRow data={this.state.availabilities[5]} row={5} day={"Saturday"} />
-                <AvailabilityRow data={this.state.availabilities[6]} row={6} day={"Sunday"} />
-              </div> 
+              {this.state.userType === "Employee"?
+                <div className="well" id="availibilitesWell">
+
+                  <legend><h4>Save Your Weekly Availabilities:</h4></legend>
+                  <RowHeaders data={this.state.availabilities} />
+                  <AvailabilityRow data={this.state.availabilities[0]} row={0} day={"Monday"} />
+                  <AvailabilityRow data={this.state.availabilities[1]} row={1} day={"Tuesday"} />
+                  <AvailabilityRow data={this.state.availabilities[2]} row={2} day={"Wednesday"} />
+                  <AvailabilityRow data={this.state.availabilities[3]} row={3} day={"Thursday"} />
+                  <AvailabilityRow data={this.state.availabilities[4]} row={4} day={"Friday"} />
+                  <AvailabilityRow data={this.state.availabilities[5]} row={5} day={"Saturday"} />
+                  <AvailabilityRow data={this.state.availabilities[6]} row={6} day={"Sunday"} />
+                </div> 
+                : null 
+              }
             </div> 
           </div> : <div className="loadingSpinner">
                           <FontAwesome
