@@ -120,7 +120,9 @@ var AvailabilityRow = React.createClass({
       }
     }
 
-    console.log(_this.props.row);
+    if(_this.props.row===6){
+      console.log(this.props.data);
+    }
     
 
     return (<div className="row">
