@@ -120,7 +120,9 @@ var AvailabilityRow = React.createClass({
       }
     }
 
-    
+    if(_this.props.row===6){
+      console.log('TINKER');
+    }
     
 
     return (<div className="row">
@@ -185,7 +187,6 @@ export default React.createClass({
         
     
         /**/
-
     return (
       <div>
         <div>{this.props.children}</div>
