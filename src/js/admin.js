@@ -74,29 +74,49 @@ var ShiftRequirementsRow = React.createClass({
 
        var assignRequirement = function(row, time, cellID){
         var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements/"+row);
-
+        var obj = {};
 
         if($('#requirement-'+cellID).html()=='No'){
 
-          var obj = {};
+          
           obj[time]='1';
           shiftRef.update(obj);
 
         } else if($('#requirement-'+cellID).html()=='1'){
 
-          var obj = {};
           obj[time]='2';
           shiftRef.update(obj);
 
         } else {
 
-          var obj = {};
           obj[time]='No';
           shiftRef.update(obj);   
 
         }
+        var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
+          var employees = snapshot.val();
+          for(var id in employees){
+            //console.log(id);
+            var availObj = {};
+            
 
-        console.log(_this.props.requirements);
+            var key = "";
+            var val = "";
+            for(key in obj){
+              val = obj[key];
+            }
+
+            if(val==='No'){
+              availObj[time]=null;
+              new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
+
+            }else{
+              availObj[time]='false';
+              new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
+            }
+          }
+        });
+
       }
 
 

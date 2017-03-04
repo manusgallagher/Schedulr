@@ -119,6 +119,10 @@ var AvailabilityRow = React.createClass({
         status.push("No");
       }
     }
+
+    if(row===6){
+      console.log(this.props.data);
+    }
     
 
     return (<div className="row">
@@ -181,7 +185,6 @@ export default React.createClass({
           }
         }.bind(this));
         
-        console.log(this.state.requirements[6]);
         /**/
     return (
       <div>
