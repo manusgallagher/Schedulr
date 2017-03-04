@@ -109,7 +109,7 @@ var ShiftRow = React.createClass({
           _this.props.changeDropdownStatus(false);
         }
 
-        console.log(shiftsToAssign);
+        //console.log(shiftsToAssign);
       }
 
       var row =  _this.props.row;
@@ -164,6 +164,7 @@ var Rota = React.createClass({
       employeeToAssign: "",
       companyEmployees: [],
       showDropDown: false,
+      userType: '',
     };
   },
 
@@ -198,6 +199,22 @@ var Rota = React.createClass({
         companyEmployees: employeeIDsAndNames,
       });
 
+    }.bind(this));
+
+    this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+param('id'));
+    this.employeeRef.on("value", function(dataSnapshot) {
+      var userType = '';
+
+      if(dataSnapshot.val().EmployerOf){
+        userType = "Employer";
+      }else{
+        userType = "Employee";
+      }
+
+      this.setState({
+        userType: userType,
+      });
+      
     }.bind(this));
     
   },
@@ -274,7 +291,7 @@ var Rota = React.createClass({
           
         {this.state.shifts.length != 0 ?
         <Well className='rota-well'>
-          {this.state.showDropDown ?
+          {this.state.showDropDown === true && this.state.userType === "Employer"?
           <div className="employeeList">
             <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
               <option>-- Select Employee --</option>
