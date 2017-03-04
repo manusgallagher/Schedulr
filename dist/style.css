@@ -354,6 +354,12 @@ body{
 .loadingSpinner{
   text-align: center;
   font-size: 150%;
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
 }
 
 #availibilitesWell{
@@ -369,3 +375,106 @@ body{
   width: 30%;
   margin: 0 auto; 
 }
+
+#schedulingConstraints{
+  margin-left: 1%;
+  width: 30%;
+  float:left;
+}
+
+#holidaysPending{
+  float:left;
+  margin-left: 1%;
+  width: 40%;
+}
+
+#schedulingConstraints .inputFields{
+  width: 100%; 
+  text-align: center;
+}
+
+.constraintInfo{
+  padding-left: 1%;
+  width: 20%;
+  text-align: right;
+}
+
+.constraintField{
+  padding-left: 1%;
+  width: 5%;
+}
+
+.constraintButton{
+  padding-left: 2%;
+  width: 5%;
+}
+
+#shiftRequirements{
+  margin-left: 1%;
+  width: 98%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+#shiftRequirements .tableHeaders{
+  padding:5px;
+  font-weight: bold;
+}
+
+#shiftRequirements .tableSideHeading{
+  text-align: right;
+  font-weight: bold;
+}
+
+#shiftRequirements td{
+  text-align: center;
+}
+
+#shiftRequirements td button{
+  text-align: center;
+}
+
+.requirementsButton{
+  padding-right: 25%;
+  padding-left: 25%;
+  padding-top: 5%;
+  padding-bottom: 5%;
+  border: 1px solid black;
+  background: none;
+  border-radius: 5px;
+  width: 90%;
+}
+
+.notRequired{
+  background:white; 
+  border: 1.7px solid #700002;
+}
+
+.oneRequired{
+  background-color: #7EE096;
+}
+
+.twoRequired{
+  background-color: #28E056;
+}
+
+#updateRequirements{
+  text-align: center;
+}
+
+#updateRequirements #updateRequirementsBtn{
+  margin-top: 5px;
+}
+
+.availabilityCheckSquare { 
+  color: inherit; 
+} 
+
+.availabilityCheckSquare:hover { 
+  color: inherit; 
+  cursor: pointer;
+} 
+.availabilityCheckSquare:visited  { 
+  color: inherit; 
+} 

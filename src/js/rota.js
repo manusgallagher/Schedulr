@@ -271,6 +271,9 @@ var Rota = React.createClass({
     
     return (
       <div>
+          
+        {this.state.shifts.length != 0 ?
+        <Well className='rota-well'>
           {this.state.showDropDown ?
           <div className="employeeList">
             <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
@@ -279,38 +282,38 @@ var Rota = React.createClass({
             </select>
             <button onClick={this.assignShifts}>Assign</button>
           </div> : null}
-        {this.state.shifts.length != 0 ?
-        <div id="rotaContainer">
-          <div className="rotaRow">
-            <button id="arrowsAndWeekVal">
-                  <a className="weekArrows" onClick={this.decWeek}><FontAwesome name='arrow-left' /></a>
-                  Week {this.state.weekVal}
-                  <a className="weekArrows" onClick={this.incWeek}><FontAwesome name='arrow-right' /></a>
-            </button>
-            <button className="time-slot">9:00</button>
-            <button className="time-slot">10:00</button>
-            <button className="time-slot">11:00</button>
-            <button className="time-slot">12:00</button>
-            <button className="time-slot">13:00</button>
-            <button className="time-slot">14:00</button>
-            <button className="time-slot">15:00</button>
-            <button className="time-slot">16:00</button>
-            <button className="time-slot">17:00</button>
-            <button className="time-slot">18:00</button>
-            <button className="time-slot">19:00</button>
-            <button className="time-slot">20:00</button>
-            <button className="time-slot">21:00</button>
-          </div>
-       
-          <ShiftRow row = { 0 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(0).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 1 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(1).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 2 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(2).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 3 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(3).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 4 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(4).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 5 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(5).week(this.state.weekVal).format("ddd Do MMM") } />
-          <ShiftRow row = { 6 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(6).week(this.state.weekVal).format("ddd Do MMM") } />
+          <div id="rotaContainer">
+            <div className="rotaRow">
+              <button id="arrowsAndWeekVal">
+                    <a className="weekArrows" onClick={this.decWeek}><FontAwesome name='arrow-left' /></a>
+                    Week {this.state.weekVal}
+                    <a className="weekArrows" onClick={this.incWeek}><FontAwesome name='arrow-right' /></a>
+              </button>
+              <button className="time-slot">9:00</button>
+              <button className="time-slot">10:00</button>
+              <button className="time-slot">11:00</button>
+              <button className="time-slot">12:00</button>
+              <button className="time-slot">13:00</button>
+              <button className="time-slot">14:00</button>
+              <button className="time-slot">15:00</button>
+              <button className="time-slot">16:00</button>
+              <button className="time-slot">17:00</button>
+              <button className="time-slot">18:00</button>
+              <button className="time-slot">19:00</button>
+              <button className="time-slot">20:00</button>
+              <button className="time-slot">21:00</button>
+            </div>
          
-        </div>
+            <ShiftRow row = { 0 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(0).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 1 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(1).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 2 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(2).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 3 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(3).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 4 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(4).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 5 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(5).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow row = { 6 }  dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(2017, "YYYY").day(6).week(this.state.weekVal).format("ddd Do MMM") } />
+           
+          </div>
+        </Well>
         : <div className="loadingSpinner">
                           <FontAwesome
                               name='spinner'
@@ -328,11 +331,11 @@ export default React.createClass({
         <div>
           <div>{this.props.children}</div>
           <div id="appPosition">
-            <Well className='rota-well'>
+            
               <div>
                 <Rota/> 
               </div>
-            </Well> 
+             
             <div id="footer"/>    
           </div>        
         </div>
