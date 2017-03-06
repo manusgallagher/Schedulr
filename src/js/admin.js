@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
 import { Well, Row, Col } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import Select from 'react-select';
 
 /*
  * CODE USED TO AUTO ADD DATES TO FIREBASE
@@ -171,10 +172,14 @@ export default React.createClass({
   getInitialState: function () {
     return {
       userType: '',
-      maxWeekly: '40',
-      maxShift: '8',
-      minShift: '4',
+      maxWeekly: '',
+      maxShift: '',
+      minShift: '',
       requirements: [],
+      employeesWithPendingHolidays: [],
+      companyEmployees: [],
+      selectedEmployee: '',
+      datesToApprove: '',
     }
   },
 
@@ -195,6 +200,49 @@ export default React.createClass({
         userType: userType,
       });
       
+    }.bind(this));
+
+
+    new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending").once("value", function(snap){
+        var tempArr = [];
+        for(var id in snap.val()){
+          tempArr.push(id);
+        }
+
+        this.setState({employeesWithPendingHolidays:tempArr});
+      }.bind(this));
+
+    this.companyRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+param('company'));
+    this.companyRef.once("value", function(companySnapshot) {
+      var employees = companySnapshot.val().Employees;
+      var employeeIDsAndNames = {};
+      for(var id in employees){
+
+        var fullName = employees[id].Name;
+        var name = "";
+
+        for(var j =0; j<fullName.length; j++){
+          if(fullName.charAt(j)!=' '){
+            name += fullName.charAt(j);
+          }else{
+            break;
+          }                       
+        }           
+
+        employeeIDsAndNames[id] = name;
+
+      }
+      this.setState({
+        companyEmployees: employeeIDsAndNames,
+      });
+    }.bind(this));
+
+    new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/0TI1WWQ/constraints").once("value", function(snap){
+      this.setState({
+        maxShift: snap.val().MaxShift,
+        minShift: snap.val().MinShift,
+        maxWeekly: snap.val().MaxWeekly,
+      });
     }.bind(this));
   },
    getLink: function(page){
@@ -235,6 +283,42 @@ export default React.createClass({
     }, 
 
 
+
+    employeeHolidaysPending: function(){
+      var _this = this;
+      var tempArr = this.state.employeesWithPendingHolidays;
+      var options = [];
+      for(var i = 0; i < tempArr.length; i++){
+        var obj = {};
+        obj['label']=this.state.companyEmployees[tempArr[i]];
+        obj['value']=tempArr[i];
+        options.push(obj);
+      }
+
+      function logChange(val) {
+          if(val != null){
+            _this.setState({selectedEmployee: val.label});
+            new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+val.value).once("value", function(snap){
+              
+              _this.setState({datesToApprove: snap.val()['dates']});
+              
+            }.bind(this));
+          }else{
+            _this.setState({selectedEmployee: ''});
+          }
+         
+      }
+
+      return(<Select
+              name="form-field-name"
+              value="one"
+              className={'selectAnEmployee'}
+              options={options}
+              onChange={logChange}
+          />);
+    },
+
+
   render() {
     return (
       <div>
@@ -265,8 +349,18 @@ export default React.createClass({
                   </table>
                 </Well>
                 <Well id="holidaysPending">
-                  <legend><h4>Pending Holidays:</h4></legend>
-                  <p>**Holidays to be confirmed**</p>
+                  <legend><h4>{this.state.employeesWithPendingHolidays.length} Pending Holiday Requests:</h4></legend>
+                  
+                    {this.employeeHolidaysPending(null)}
+
+                  {this.state.selectedEmployee.length > 0 ?
+                    <div>
+                      <span>{this.state.selectedEmployee}</span>
+                      <span>{this.state.datesToApprove}</span>
+                    </div>
+
+                    : null}
+                  
                 </Well>                
                 <Well id="shiftRequirements">
                   <legend><h4>Shift Requirements:</h4></legend>

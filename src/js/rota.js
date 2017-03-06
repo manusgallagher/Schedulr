@@ -71,46 +71,46 @@ var ShiftRow = React.createClass({
       var cellClicked = function(row, column, cellID, userType){
         if(userType==="Employer"){
           var date = shiftDates[row];
-        var time = shiftTimes[column];
-        var content = $('#message-'+cellID).html();
-        if(content==="Unassigned"){
-          $('#message-'+cellID).html("Assinging");
-          $("#"+cellID).removeClass("unassigned");
-          $("#"+cellID).addClass("assigning");
+          var time = shiftTimes[column];
+          var content = $('#message-'+cellID).html();
+          if(content==="Unassigned"){
+            $('#message-'+cellID).html("Assinging");
+            $("#"+cellID).removeClass("unassigned");
+            $("#"+cellID).addClass("assigning");
 
 
-          var obj = {};
-          obj[date]=time;
-          shiftsToAssign.push(obj);
-        } else if (content==="Assinging"){
+            var obj = {};
+            obj[date]=time;
+            shiftsToAssign.push(obj);
+          } else if (content==="Assinging"){
 
-          $('#message-'+cellID).html("Unassigned");
-          $("#"+cellID).addClass("unassigned");
-          $("#"+cellID).removeClass("assigning");
+            $('#message-'+cellID).html("Unassigned");
+            $("#"+cellID).addClass("unassigned");
+            $("#"+cellID).removeClass("assigning");
 
-          if(shiftsToAssign.length===1){
-            shiftsToAssign = [];
-          } else {
-            var posToRemove = -1;
+            if(shiftsToAssign.length===1){
+              shiftsToAssign = [];
+            } else {
+              var posToRemove = -1;
 
-            for(var i in shiftsToAssign){
-              
-             for(var key in shiftsToAssign[i]){
-                if(key === date && shiftsToAssign[i][key]===time){
-                  posToRemove = i;
-                }
-             }
+              for(var i in shiftsToAssign){
+                
+               for(var key in shiftsToAssign[i]){
+                  if(key === date && shiftsToAssign[i][key]===time){
+                    posToRemove = i;
+                  }
+               }
+              }
+              shiftsToAssign.splice(posToRemove,1);
             }
-            shiftsToAssign.splice(posToRemove,1);
+          } 
+          if(shiftsToAssign.length>0){
+            _this.props.changeDropdownStatus(true);
+          }else{
+            _this.props.changeDropdownStatus(false);
           }
-        } 
-        if(shiftsToAssign.length>0){
-          _this.props.changeDropdownStatus(true);
-        }else{
-          _this.props.changeDropdownStatus(false);
-        }
 
-        //console.log(shiftsToAssign);
+          //console.log(shiftsToAssign);
         }
       }
       var userType = _this.props.userType;
@@ -167,6 +167,7 @@ var Rota = React.createClass({
       companyEmployees: [],
       showDropDown: false,
       userType: '',
+      employeesAvailable: [],
     };
   },
 
@@ -238,33 +239,32 @@ var Rota = React.createClass({
 
   assignShifts: function(){
 
-      if(this.state.employeeToAssign.length>0){
-        for(var i in shiftsToAssign){
-          var shiftDetails= shiftsToAssign[i];
-          for(var date in shiftDetails){
-            if(date!=".key"){
-              var shiftTime = shiftDetails[date];
-              var shiftDate = date+"-2017";
-              var dow = moment(shiftDate, "DD-MM-YYYY").day();
+    for(var i in shiftsToAssign){
+      var shiftDetails= shiftsToAssign[i];
+      for(var date in shiftDetails){
+        if(date!=".key"){
+          var shiftTime = shiftDetails[date];
+          var shiftDate = date+"-2017";
+          var dow = moment(shiftDate, "DD-MM-YYYY").day();
 
-              /*
-               * REMOVE THIS
-               *
-              console.log("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekVal+"/"+dow+"/"+date);*/
-              
-              var obj ={};
-              var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekVal+"/"+dow+"/"+date);
-              obj[shiftTime]=this.state.employeeToAssign;
-              
-              shiftRef.update(obj);
-            }         
+          /*
+          * REMOVE THIS
+          *
+          console.log("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekVal+"/"+dow+"/"+date);*/
 
-          } 
-        }
-      }
-      shiftsToAssign=[];
-      this.state.showDropDown = false;
-    },
+          var obj ={};
+          var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekVal+"/"+dow+"/"+date);
+          obj[shiftTime]=this.state.employeeToAssign;
+
+          shiftRef.update(obj);
+        }         
+
+      } 
+    }
+
+    shiftsToAssign=[];
+    this.state.showDropDown = false;
+  },
 
     incWeek: function(){
       shiftDates = [];
@@ -277,17 +277,44 @@ var Rota = React.createClass({
       var weekVal = (this.state.weekVal-1);
       this.setState({weekVal: weekVal,});
     },
+
+    getEmployees: function(){
+      var employeeIDs = [];
+        /*for(var id in this.state.companyEmployees){
+          employeeIDs.push(id);
+        }*/
+        
+          var dow, time;        
+          var prevAvailable = this.state.employeesAvailable;
+          var nowAvailable = [];
+          console.log("Previously Available: ");
+          console.log(prevAvailable);
+          var dow, time;
+
+          for(var i in shiftsToAssign){
+            for(var j in shiftsToAssign[i]){
+              dow = moment(j+"-2017", "DD-MM-YYYY").day();
+              time = shiftsToAssign[i][j]; 
+            }
+          }
+          this.ShiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees").once("value", function(employeeSnap){
+            for(var id in employeeSnap.val()){
+              if(employeeSnap.val()[id]['availabilities'][dow][time]){
+                nowAvailable.push(id);
+              }
+            }
+            this.setState({employeesAvailable: nowAvailable});
+            
+          }.bind(this));
+        
+        
+
+        return this.state.employeesAvailable;
+
+    },
   
-
   render: function() {
-    var employeeIDs = [];
-
-    for(var id in this.state.companyEmployees){
-      employeeIDs.push(id);
-    } 
-    
-    
-    
+  
     return (
       <div>
           
@@ -297,7 +324,7 @@ var Rota = React.createClass({
           <div className="employeeList">
             <select onChange={this.changeEmployee} value={this.state.employeeToAssign}>
               <option>-- Select Employee --</option>
-                {employeeIDs.map(this.getEmployeeDropdown)}
+                {this.getEmployees(null).map(this.getEmployeeDropdown)}
             </select>
             <button onClick={this.assignShifts}>Assign</button>
           </div> : null}

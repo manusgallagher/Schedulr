@@ -478,3 +478,6 @@ body{
 .availabilityCheckSquare:visited  { 
   color: inherit; 
 } 
+.selectAnEmployee{
+  width: 30%;
+}

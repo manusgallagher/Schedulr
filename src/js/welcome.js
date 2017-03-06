@@ -156,24 +156,9 @@ export default React.createClass({
           userType = "Employer";
         }else{
           userType = "Employee";
-        }
 
-        this.setState({
-          userType: userType,
-        });
-        
-      }.bind(this));
-      
-    
-  },
-
-
-  render() {
-    /*
-     * CODE USED TO ASSIGN AVAILABILITIES
-     *
-     *
-        this.employeeAvailabilityRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')).once('value', function(snap) {
+         
+          this.employeeAvailabilityRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')).once('value', function(snap) {
           if(snap.val().availabilities){
             //console.log(snap.val().availabilities[0]);
           }else{
@@ -190,13 +175,32 @@ export default React.createClass({
                   obj[i] = false;
                 }
                   
-              } 
-              new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')+"/availabilities/"+day).update(obj);
-                   
+                } 
+                new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')+"/availabilities/"+day).update(obj);
+                     
+              }
+               
             }
-             
-          }
-        }.bind(this));
+          }.bind(this));
+          
+        }
+
+        this.setState({
+          userType: userType,
+        });
+        
+      }.bind(this));
+
+    
+  },
+
+
+  render() {
+    /*
+     * CODE USED TO ASSIGN AVAILABILITIES
+     *
+     *
+        
         
         /**/
     return (

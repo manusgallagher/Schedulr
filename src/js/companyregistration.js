@@ -75,10 +75,16 @@ export default React.createClass({
 				          Joined: now,
 				          UniqueID: enteredID
 				      	});
-					});
-					
-					window.openAppRoute("/home?id="+UID+"?company="+enteredID);
-	                
+				      					      	
+					}.bind(this));
+					 
+	                firebase.auth().signOut().then(function() {
+				        // Sign-out successful.
+				        window.openAppRoute("/");
+				    }, function(error) {
+				        // An error happened.
+				        alert(error.message);
+				    });
 				}else{
 					$("#idError").empty().append("<b>Error:</b> <br/>"+enteredID+" is not a valid CompanyID.");
 				}				
