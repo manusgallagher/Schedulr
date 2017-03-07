@@ -189,35 +189,37 @@ export default React.createClass({
       <div>
         <div>{this.props.children}</div>
         <Well style={style.well}>
-          <div style={style.userContent}>
-            <h3>Update Details: </h3>
-            <table style={style.profile}>
-              <tbody>
-                <tr>
-                  <td style={style.cell}><b>Name:</b></td>
-                  <td style={style.cell}><input style={style.userDetails} id ="userName" type="text" onChange={ this.handleChangeName } value ={this.state.name} /></td>
-                </tr>
-                <tr>
-                  <td style={style.cell}><b>Surname:</b></td>
-                  <td style={style.cell}><input style={style.userDetails} id ="userSurname" type="text" onChange={ this.handleChangeSurname } value ={this.state.surname} /></td>
-                </tr>
-                <tr>
-                  <td style={style.cell}><b>Address:</b></td>
-                  <td style={style.cell}><textarea style={style.userDetails} id="userAddress" onChange={ this.handleChangeAddress }  rows="4" cols="22" value={this.state.address}/>
-                  </td>
-                </tr>
-                <tr>
-                  <td style={style.cell}><b>Phone Number:</b></td>
-                  <td style={style.cell}><input style={style.userDetails} id ="userPhone" onChange={ this.handleChangePhone }  type="text" value ={this.state.phone} /></td>
-                </tr>
-                <tr>
-                  <td style={style.cell}><b>Email Address:</b></td>
-                  <td style={style.cell}><input style={style.userDetails} id ="userEmail" onChange={ this.handleChangeEmail }  type="text" value ={this.state.email} /></td>
-                </tr>
-              </tbody>
-            </table>
-              <Button bsStyle="primary" onClick={this.updateDetails}>Update</Button>
-          </div>
+          <form>
+            <div style={style.userContent}>
+              <h3>Update Details: </h3>
+              <table style={style.profile}>
+                <tbody>
+                  <tr>
+                    <td style={style.cell}><b>Name:</b></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userName" type="text" onChange={ this.handleChangeName } value ={this.state.name} /></td>
+                  </tr>
+                  <tr>
+                    <td style={style.cell}><b>Surname:</b></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userSurname" type="text" onChange={ this.handleChangeSurname } value ={this.state.surname} /></td>
+                  </tr>
+                  <tr>
+                    <td style={style.cell}><b>Address:</b></td>
+                    <td style={style.cell}><textarea style={style.userDetails} id="userAddress" onChange={ this.handleChangeAddress }  rows="4" cols="22" value={this.state.address}/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={style.cell}><b>Phone Number:</b></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userPhone" onChange={ this.handleChangePhone }  type="text" value ={this.state.phone} /></td>
+                  </tr>
+                  <tr>
+                    <td style={style.cell}><b>Email Address:</b></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userEmail" onChange={ this.handleChangeEmail }  type="text" value ={this.state.email} /></td>
+                  </tr>
+                </tbody>
+              </table>
+                <button onClick={this.updateDetails}>Update</button>
+            </div>
+          </form>
         </Well>
         <MuiThemeProvider>
           <Snackbar

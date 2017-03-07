@@ -215,7 +215,20 @@ export default React.createClass({
                   Welcome to <span id="compName" style={style.name}>{this.state.companyName}</span>.
                   <br/>
                   <br/>
-                  **Insert Content Here**
+                  <br/>
+                  <span>
+                  ***********************************
+                  <br/>
+                  <br/>
+                  Insert Content Here
+                  <br/>
+                  <br/>
+                  ***********************************
+                  </span>
+                  <br/>
+                  <br/>
+                  <br/>
+                  <p id= "companyID"><b>Company ID:</b> {param('company')}</p>
                 </div>
             </div>  
           </div>
