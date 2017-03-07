@@ -178,13 +178,15 @@ export default React.createClass({
       requirements: [],
       employeesWithPendingHolidays: [],
       companyEmployees: [],
-      selectedEmployee: '',
-      datesToApprove: '',
+      holidays: [],
+      employeeSelected: '',
+      dateToReview: '',
     }
   },
 
   componentWillMount(){
     this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements"), "requirements");
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays"), "holidays");
 
     this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+param('id'));
     this.employeeRef.on("value", function(dataSnapshot) {
@@ -245,9 +247,10 @@ export default React.createClass({
       });
     }.bind(this));
   },
-   getLink: function(page){
-      return "/"+page+"?id="+param('id')+"&company=" + param('company');
-    },
+
+  getLink: function(page){
+    return "/"+page+"?id="+param('id')+"&company=" + param('company');
+  },
 
     handleMaxWeekly: function(e){
       this.setState({maxWeekly:e.target.value,})
@@ -280,46 +283,106 @@ export default React.createClass({
       this.constraintRef.update({
         MaxShift: this.state.maxShift,
       });
-    }, 
-
-
-
-    employeeHolidaysPending: function(){
-      var _this = this;
-      var tempArr = this.state.employeesWithPendingHolidays;
-      var options = [];
-      for(var i = 0; i < tempArr.length; i++){
-        var obj = {};
-        obj['label']=this.state.companyEmployees[tempArr[i]];
-        obj['value']=tempArr[i];
-        options.push(obj);
-      }
-
-      function logChange(val) {
-          if(val != null){
-            _this.setState({selectedEmployee: val.label});
-            new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+val.value).once("value", function(snap){
-              
-              _this.setState({datesToApprove: snap.val()['dates']});
-              
-            }.bind(this));
-          }else{
-            _this.setState({selectedEmployee: ''});
-          }
-         
-      }
-
-      return(<Select
-              name="form-field-name"
-              value="one"
-              className={'selectAnEmployee'}
-              options={options}
-              onChange={logChange}
-          />);
     },
 
 
+    showEmployees: function(){
+      var datesToApprove = this.state.holidays[1];
+      var ids=[];
+      for(var id in datesToApprove){
+        ids.push(id);
+      }
+
+      return (<div id="employeesPending">{ids.map(this.getEmployeeButtons)}</div>);
+    },
+
+    getEmployeeButtons: function(item, index){
+      var _this = this;
+      var cellClicked = function(id){
+        _this.setState({
+          employeeSelected:id,
+          dateToReview: '',
+        });
+      }
+
+      var name = this.state.companyEmployees[item];
+      return (<button key={index} onClick={cellClicked.bind(null,item)}>{name}</button>)
+    }, 
+
+    showPendingDates: function(){
+
+      var holidaysToReview =this.state.holidays[1][this.state.employeeSelected];
+      if(holidaysToReview){
+        holidaysToReview =this.state.holidays[1][this.state.employeeSelected]['dates'];
+        return (<div id="holidayStatusPending">{holidaysToReview.map(this.getDateButtons)}</div>);
+      }else{
+        return "";
+      }
+      
+    },
+
+    getDateButtons: function(item, index){
+      var _this = this;
+      var cellClicked = function(date){
+        _this.setState({dateToReview: date});
+      }
+
+      var name = this.state.companyEmployees[item];
+      return (<button key={index} onClick={cellClicked.bind(null,item)}>{item}</button>)
+    }, 
+
+    acceptHolidayRequest: function(){
+      var _this=this;
+
+      new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/approved/"+this.state.employeeSelected+"/dates").once("value", function(snap){
+        var holidays = snap.val();
+        if(holidays){
+          holidays.push(this.state.dateToReview);
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/approved/"+this.state.employeeSelected+"/dates").set(holidays);
+        }else{
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/approved/"+this.state.employeeSelected+"/dates").set([this.state.dateToReview]);
+        }        
+      }.bind(this))
+
+       new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+this.state.employeeSelected+"/dates").once("value", function(snap){
+          var dates = snap.val();
+          var datesToStillReview = []
+          for(var i=0; i<snap.val().length; i++){
+            if(dates[i]!=this.state.dateToReview){
+              datesToStillReview.push(dates[i])
+            }
+          }
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+this.state.employeeSelected+"/dates").set(datesToStillReview);
+       }.bind(this));
+
+       this.setState({dateToReview: ''});
+    },
+    rejectHolidayRequest: function(){
+        new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+this.state.employeeSelected+"/dates").once("value", function(snap){
+          var dates = snap.val();
+          var datesToStillReview = []
+          for(var i=0; i<snap.val().length; i++){
+            if(dates[i]!=this.state.dateToReview){
+              datesToStillReview.push(dates[i])
+            }
+          }
+
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays/pending/"+this.state.employeeSelected+"/dates").set(datesToStillReview);
+        }.bind(this));
+        this.setState({dateToReview: ''});
+    },
+    getNumberOfPendingRequests: function(){
+      var count = 0;
+      var pending = this.state.holidays[1];
+      for(var id in pending){
+        count += pending[id]['dates'].length;
+        
+      }
+      return count;
+    },
+
   render() {
+    var numberOfPendingHolidays = this.getNumberOfPendingRequests();
     return (
       <div>
         <div>{this.props.children}</div>
@@ -348,20 +411,30 @@ export default React.createClass({
                     </tbody>
                   </table>
                 </Well>
-                <Well id="holidaysPending">
-                  <legend><h4>{this.state.employeesWithPendingHolidays.length} Pending Holiday Requests:</h4></legend>
-                  
-                    {this.employeeHolidaysPending(null)}
+                {numberOfPendingHolidays > 0 ?
+                  <Well id="holidaysPending">
+                    <legend><h4>{numberOfPendingHolidays} Pending Holiday Requests:</h4></legend>
+                    {this.state.holidays.length > 0 ?
+                      <div>
+                        {this.showEmployees()}
+                      </div>
+                    :null}
 
-                  {this.state.selectedEmployee.length > 0 ?
-                    <div>
-                      <span>{this.state.selectedEmployee}</span>
-                      <span>{this.state.datesToApprove}</span>
-                    </div>
+                    {this.state.employeeSelected.length > 0 ? 
+                      <div>
+                        {this.showPendingDates()}
+                      </div>
+                    :null}
 
-                    : null}
-                  
-                </Well>                
+                     {this.state.dateToReview.length > 0 ? 
+                      <div id="acceptOrReject">
+                        <button onClick={this.acceptHolidayRequest}><FontAwesome name='check '/></button>
+                        <button onClick={this.rejectHolidayRequest}><FontAwesome name='times '/></button>
+                      </div>
+                    :null}             
+                  </Well> 
+                :null}
+
                 <Well id="shiftRequirements">
                   <legend><h4>Shift Requirements:</h4></legend>
                   <div id="updateRequirements">

@@ -94,8 +94,9 @@ export default React.createClass({
 
         this.holidayRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+companyID+'/holidays/pending/'+userID);
         this.holidayRef.update({
-          dates: reqHolidays,
+          dates: this.state.datesPending,
         });
+        
 
         
     },

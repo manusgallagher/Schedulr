@@ -318,7 +318,6 @@ body{
 
 #arrowsAndWeekVal     {
   width:10%;
-  height: 5em;
   position: relative;  
   margin-right: 2px; 
   color:black; 
@@ -478,6 +477,86 @@ body{
 .availabilityCheckSquare:visited  { 
   color: inherit; 
 } 
-.selectAnEmployee{
+
+#employeesPending{
+  float: left;
+  height: 75px;
   width: 30%;
+  overflow-x: none;
+  overflow-y: auto;
+  margin-top: 8px;
+  margin-bottom: -8px;
+
+}
+
+#employeesPending button{
+  display:block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  background: #BDBDBD;
+  border: none;
+  border-radius: 3px;
+  margin-bottom: 1px;
+}
+
+#employeesPending button:focus {
+  outline:0;
+}
+
+#employeesPending button:hover {
+  background: #c6c6c6;
+}
+
+#holidayStatusPending{
+  float: left;
+  height: 75px;
+  width: 30%;
+  overflow-x: none;
+  overflow-y: auto;
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+#holidayStatusPending button{
+  display:block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  background: #BDBDBD;
+  border: none;
+  margin-bottom: 1px;
+  border-radius: 3px;
+}
+
+#holidayStatusPending button:focus {
+  outline:0;
+}
+
+#holidayStatusPending button:hover {
+  background: #c6c6c6;
+}
+
+#acceptOrReject{
+  float: left;
+  height: 75px;
+  width: 10%;
+  overflow-x: none;
+  overflow-y: auto;
+  margin-top: 8px;
+  margin-bottom: -8px;
+}
+
+#acceptOrReject button{
+  display:block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-radius: 3px;
+}
+
+#acceptOrReject button:focus {
+  outline:0;
 }
