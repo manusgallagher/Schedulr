@@ -48,6 +48,11 @@ export default React.createClass({
       window.openAppRoute(newUrl);
     },
 
+    keyDown: function(event) {
+      if(event.key==="Enter"){
+        this.addDetails();
+      }
+    },
   render() {
     return (
       <div>
@@ -59,7 +64,6 @@ export default React.createClass({
                 <div className="modal-header">
                   <img className="ModalHeader" src="img/logo.png" alt="logo" />
                 </div>
-                <form>
                   <div id="AddUserDetails" className="modal-body LoginModal">
                     <p id="AdditionalInputError" />
                     <table>
@@ -67,13 +71,13 @@ export default React.createClass({
                           <td className="AdditionalDetailsHeader">*First Name:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsName" placeholder="First Name..." tabIndex={1} />
+                              <input type="text" className="form-control" id="AddDetailsName" placeholder="First Name..." onKeyPress={this.keyDown} tabIndex={1} />
                             </div>
                           </td>
                           <td className="AdditionalDetailsHeader">*Address Line 1:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsAddressL1" placeholder="Address Line 1..." tabIndex={5} />
+                              <input type="text" className="form-control" id="AddDetailsAddressL1" placeholder="Address Line 1..." onKeyPress={this.keyDown} tabIndex={5} />
                             </div>
                           </td>
                         </tr>
@@ -81,13 +85,13 @@ export default React.createClass({
                           <td className="AdditionalDetailsHeader">*Surname:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsSurname" placeholder="Surname..." tabIndex={2} />
+                              <input type="text" className="form-control" id="AddDetailsSurname" placeholder="Surname..." onKeyPress={this.keyDown} tabIndex={2} />
                             </div>
                           </td>
                           <td className="AdditionalDetailsHeader">*Address Line 2:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsAddressL2" placeholder="Address Line 2..." tabIndex={6} />
+                              <input type="text" className="form-control" id="AddDetailsAddressL2" placeholder="Address Line 2..." onKeyPress={this.keyDown} tabIndex={6} />
                             </div>
                           </td>
                         </tr>
@@ -95,13 +99,13 @@ export default React.createClass({
                           <td className="AdditionalDetailsHeader">*DOB:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="date" className="form-control" id="AddDetailsDOB" tabIndex={3} />
+                              <input type="date" className="form-control" id="AddDetailsDOB" onKeyPress={this.keyDown} tabIndex={3} />
                             </div>
                           </td>
                           <td className="AdditionalDetailsHeader">Address Line 3:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsAddressL3" placeholder="Address Line 3..." tabIndex={7} />
+                              <input type="text" className="form-control" id="AddDetailsAddressL3" placeholder="Address Line 3..." onKeyPress={this.keyDown} tabIndex={7} />
                             </div>
                           </td>
                         </tr>
@@ -109,13 +113,13 @@ export default React.createClass({
                           <td className="AdditionalDetailsHeader">*Phone Number:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <input type="text" className="form-control" id="AddDetailsPhone" placeholder="Phone Number..." tabIndex={4} />
+                              <input type="text" className="form-control" id="AddDetailsPhone" placeholder="Phone Number..." onKeyPress={this.keyDown} tabIndex={4} />
                             </div>
                           </td>
                           <td className="AdditionalDetailsHeader">*County:</td>
                           <td>
                             <div className="form-group AdditonalInfoInput">
-                              <select name="county" id="AddDetailsCounty" className="form-control" placeholder="County..." tabIndex={8}>
+                              <select name="county" id="AddDetailsCounty" className="form-control" placeholder="County..." onKeyPress={this.keyDown} tabIndex={8}>
                                 <option>-- Select a County --</option>
                                 <option value="Antrim">Antrim</option>
                                 <option value="Armagh">Armagh</option>
@@ -157,7 +161,6 @@ export default React.createClass({
                     <br />                  
                     <button onClick={this.addDetails} className="btn btn-default btn-success"><span className="glyphicon glyphicon-off" /> Save Details</button>
                   </div>
-                </form>
                 <div id="loadingSave" className="modal-body LoginModal"></div>
                 <div className="modal-footer">
                   <p><a onClick={this.signOut}><span className="glyphicon glyphicon-log-out" /> Sign Out</a></p>

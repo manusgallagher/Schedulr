@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -124,9 +125,21 @@ export default React.createClass({
 	          Created: now
 	      	});
 
-	      	window.openAppRoute("/home?id="+UID+"?company="+generatedId)
+	      	firebase.auth().signOut().then(function() {
+		        // Sign-out successful.
+		        window.openAppRoute("/");
+		    }, function(error) {
+		        // An error happened.
+		        alert(error.message);
+		    });
 		});
 	},
+
+	keyDown: function(event) {
+      if(event.key==="Enter"){
+        this.saveCompany();
+      }
+    },
 
   render() {
     return (
@@ -146,9 +159,11 @@ export default React.createClass({
 				<a onClick={this.joinCompany} className="btn btn-lg btn-primary joinCompany"><span className="glyphicon glyphicon-cloud" /> Join Company</a>
 			</div>
 			<div id="joinACompany">
-				<p id="idError"></p>
-				<input id="companyID" type="text" className="form-control" placeholder="Unique ID..." /><br />
-				<button onClick={this.submitID} className="btn btn-default btn-success"><i className="fa fa-paper-plane-o" /> Submit</button>
+				<form>
+					<p id="idError"></p>
+					<input id="companyID" type="text" className="form-control" placeholder="Unique ID..." /><br />
+					<button onClick={this.submitID} className="btn btn-default btn-success"><i className="fa fa-paper-plane-o" /> Submit</button>
+				</form>
 			</div>
 			<div id="createACompany">
 				<table>
@@ -156,13 +171,13 @@ export default React.createClass({
 	                  <td className="CreateCompanyHeader">*Company Name:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CompanyName" placeholder="Company Name..." />
+	                      <input type="text" className="form-control" id="CompanyName" placeholder="Company Name..." onKeyPress={this.keyDown} tabIndex={1}/>
 	                    </div>
 	                  </td>
 	                  <td className="CreateCompanyHeader">*Address Line 1:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CreateCompanyAddressL1" placeholder="Address Line 1..." />
+	                      <input type="text" className="form-control" id="CreateCompanyAddressL1" placeholder="Address Line 1..." onKeyPress={this.keyDown} tabIndex={5}/>
 	                    </div>
 	                  </td>
 	                </tr>
@@ -170,13 +185,13 @@ export default React.createClass({
 	                  <td className="CreateCompanyHeader">*Email:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CreateCompanyEmail" placeholder="Email..." />
+	                      <input type="text" className="form-control" id="CreateCompanyEmail" placeholder="Email..." onKeyPress={this.keyDown} tabIndex={2}/>
 	                    </div>
 	                  </td>
 	                  <td className="CreateCompanyHeader">*Address Line 2:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CreateCompanyAddressL2" placeholder="Address Line 2..." />
+	                      <input type="text" className="form-control" id="CreateCompanyAddressL2" placeholder="Address Line 2..." onKeyPress={this.keyDown} tabIndex={6}/>
 	                    </div>
 	                  </td>
 	                </tr>
@@ -184,13 +199,13 @@ export default React.createClass({
 	                  <td className="CreateCompanyHeader">*Phone Number:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CreateCompanyNumber" placeholder="Phone Number..." />
+	                      <input type="text" className="form-control" id="CreateCompanyNumber" placeholder="Phone Number..." onKeyPress={this.keyDown} tabIndex={3}/>
 	                    </div>
 	                  </td>
 	                  <td className="CreateCompanyHeader">Address Line 3:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <input type="text" className="form-control" id="CreateCompanyAddressL3" placeholder="Address Line 3..." />
+	                      <input type="text" className="form-control" id="CreateCompanyAddressL3" placeholder="Address Line 3..." onKeyPress={this.keyDown} tabIndex={7}/>
 	                    </div>
 	                  </td>
 	                </tr>
@@ -198,17 +213,37 @@ export default React.createClass({
 	                  <td className="CreateCompanyHeader">*Type:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <select name="county" id="CreateCompanyType" className="form-control">
+	                      <select name="county" id="CreateCompanyType" className="form-control" onKeyPress={this.keyDown} tabIndex={4}>
 	                        <option>-- Select a Type --</option>
-	                        <option value="pub">Pub</option>
-	                        <option value="restaurant">Restaurant</option>
+	                        <option value="B&B">B&B'S</option>
+							<option value="Bakery">Bakery</option>
+							<option value="Betting Agency">Betting Agency</option>
+							<option value="Bowling Alley">Bowling Alleys</option>
+							<option value="Burrito Bar">Burrito Bar</option>
+							<option value="Cafe">Cafe</option>
+							<option value="Car Dealership">Car Dealership</option>
+							<option value="Car Rental">Car Rental</option>
+							<option value="Department Store">Department Store</option>
+							<option value="DIY Store">DIY Store</option>
+							<option value="Hostels">Hostels</option>
+							<option value="Hotels">Hotels</option>
+							<option value="Jewelers">Jewelers</option>
+							<option value="Massage Parlor">Massage Parlor</option>
+							<option value="Mechanics">Mechanics</option>
+							<option value="Newsagents">Newsagents</option>
+							<option value="Pizzeria">Pizzeria</option>
+							<option value="Public House">Public House</option>
+							<option value="Restaurant">Restaurant</option>
+							<option value="Tattoo Parlour">Tattoo Parlour</option>
+							<option value="Bookshop">Shop - Book</option>
+							<option value="Sweetshop">Shop - Sweet</option>
 	                      </select>
 	                    </div>
 	                  </td>
 	                  <td className="CreateCompanyHeader">*County:</td>
 	                  <td>
 	                    <div className="form-group CreateCompanyInput">
-	                      <select name="county" id="CreateCompanyCounty" className="form-control">
+	                      <select name="county" id="CreateCompanyCounty" className="form-control" onKeyPress={this.keyDown} tabIndex={8}>
 	                        <option>-- Select a County --</option>
 	                        <option value="Antrim">Antrim</option>
 	                        <option value="Armagh">Armagh</option>

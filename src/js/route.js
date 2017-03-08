@@ -110,7 +110,7 @@ function pageSetup(){
 
 firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-        console.log("Logged in");
+        console.log("Logged In");      
         
         new Firebase('https://schedulr-c0fd7.firebaseio.com/users/' + user.uid).once('value', function(snap) {
             if (snap.val() == null) {
@@ -121,14 +121,14 @@ firebase.auth().onAuthStateChanged(function(user) {
               /*You Don't Need to Add User Details...*/
               if(snap.val().EmployeeOf){
                 var companyid = snap.val().EmployeeOf.UniqueID;
-                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
+                var newUrl =encodeURI("/admin?id="+user.uid+"&company="+companyid);
 
                 window.openAppRoute(newUrl);
               
 
               }else if(snap.val().EmployerOf){
                 var companyid = snap.val().EmployerOf.UniqueID;
-                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
+                var newUrl =encodeURI("/admin?id="+user.uid+"&company="+companyid); //CHANGED CODE HERE FOR CONVENIENCE
                 
                 window.openAppRoute(newUrl);
               }else{

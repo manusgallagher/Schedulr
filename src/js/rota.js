@@ -19,7 +19,7 @@ function param(name, url) {
 
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 };
-
+var timeMap = {'000':'00:00','100':'1:00','200':'2:00','300':'3:00','400':'4:00','500':'5:00','600':'6:00','700':'7:00','800':'8:00','900':'9:00','1000':'10:00','1100':'11:00','1200':'12:00','1300':'13:00','1400':'14:00','1500':'15:00','1600':'16:00','1700':'17:00','1800':'18:00','1900':'19:00','2000':'20:00','2100':'21:00','2200':'22:00','2300':'23:00'};
 var shiftDates = [];
 var shiftTimes = [];
 var shiftsToAssign = [];
@@ -30,7 +30,7 @@ var ShiftRow = React.createClass({
     var _this = this;
     var createCell = function(item, index) {
 
-      var cellClicked = function(row, column, cellID, userType){
+      var unassignedCellClicked = function(row, column, cellID, userType){
         if(userType==="Employer"){
           var date = shiftDates[row];
           var time = shiftTimes[column];
@@ -75,6 +75,14 @@ var ShiftRow = React.createClass({
           //console.log(shiftsToAssign);
         }
       }
+      var cellClicked = function(row, column, cellID, userType){
+        if(userType==="Employer"){
+          /*
+           * CODE TO REASSIGN ASSIGNED SHIFTS
+           */
+          console.log(cellID);
+        }
+      }
       var userType = _this.props.userType;
       var row =  _this.props.row;
       var column = index;
@@ -83,10 +91,16 @@ var ShiftRow = React.createClass({
 
       if(item==='Unassigned'){
         return (              
-        <button id={cellID} key={index} onClick={cellClicked.bind(null, row, column, cellID, userType)} className={'time-slot unassigned'}> 
+        <button id={cellID} key={index} onClick={unassignedCellClicked.bind(null, row, column, cellID, userType)} className={'time-slot unassigned'}> 
           <span id={'message-'+cellID}>{item}</span> 
         </button> 
           )
+      }else if(item==='Not Open'){
+        return (
+        <button id={cellID} key={index} className={'time-slot notOpen'}> 
+          <span>{item}</span>
+        </button> 
+        )
       }else{
         return (
         <button id={cellID} key={index} onClick={cellClicked.bind(null, row, column, cellID, userType)} className={'time-slot assigned'}> 
@@ -101,15 +115,28 @@ var ShiftRow = React.createClass({
     if(this.props.shifts[this.props.weekVal]){
       weeklyShifts = this.props.shifts[this.props.weekVal][this.props.row];
    }
-   
+
+    var arrayOfTimes = [];
+    for(var day in this.props.requirements){
+      for(var time in this.props.requirements[day]){
+        if(this.props.requirements[day][time]!='No'){
+          if(!arrayOfTimes.includes(time)){
+            arrayOfTimes.push(time);
+          }
+        }
+      }
+    }
     for(var dates in weeklyShifts){
         if(dates!=".key"){
           shiftDates.push(dates);
           var shifts = weeklyShifts[dates];
         
           for(var times in shifts){
-            shiftsAssigned.push(shifts[times]);
-            shiftTimes.push(times);
+            if(arrayOfTimes.includes(times)){
+              shiftsAssigned.push(shifts[times]);
+              shiftTimes.push(times);
+            }
+            
           }
       }
     }
@@ -127,20 +154,24 @@ var Rota = React.createClass({
       yearVal: moment().year(),
       numOfWeeks : moment().weeksInYear(),
       shifts: [],
+      holidays: [],
       employeeToAssign: "",
       companyEmployees: [],
       showDropDown: false,
       userType: '',
       employeesAvailable: [],
       shiftsToBeAssigned: [],
+      constraints: [],
+      requirements: [],
     };
   },
 
   componentWillMount: function() {
     
     this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/"+this.state.yearVal), "shifts");
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/holidays"), "holidays");
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements"), "requirements");
    
-    
     /*
      * Populating Object with Employee ID's and Names.
      */
@@ -173,7 +204,7 @@ var Rota = React.createClass({
     this.employeeRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/users/'+param('id'));
     this.employeeRef.on("value", function(dataSnapshot) {
       var userType = '';
-
+      var _this = this;
       if(dataSnapshot.val().EmployerOf){
         userType = "Employer";
          this.shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/"+this.state.yearVal).once("value", function(snap){
@@ -185,27 +216,39 @@ var Rota = React.createClass({
             var count  = 0;
             var weeks = (moment(year, "YYYY").weeksInYear());
             for(var week=1; week<=weeks; week++){
-              //console.log(week);
               var count  = 0; 
               for(var day=0; day<7; day++){
-                
+                var shiftFormat = {  
+                                '000' :'Not Open',
+                                '100' :'Not Open',
+                                '200' :'Not Open',
+                                '300' :'Not Open',
+                                '400' :'Not Open',
+                                '500' :'Not Open',
+                                '600' :'Not Open',
+                                '700' :'Not Open',
+                                '800' :'Not Open',
+                                '900' :'Not Open',
+                                '1000':'Not Open',
+                                '1100':'Not Open',
+                                '1200':'Not Open',
+                                '1300':'Not Open',
+                                '1400':'Not Open',
+                                '1500':'Not Open',
+                                '1600':'Not Open',
+                                '1700':'Not Open',
+                                '1800':'Not Open',
+                                '1900':'Not Open',
+                                '2000':'Not Open',
+                                '2100':'Not Open',
+                                '2200':'Not Open',
+                                '2300':'Not Open',};
+
                 var date = moment(year, "YYYY").day(day).week(week);
-                for(var i in hours){
-                  var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts/'+param('company')+'/'+year+'/'+week+'/'+count+'/'+date.format("DD-MM"));
-                  shiftRef.set({  '900' :'Unassigned',
-                                  '1000':'Unassigned',
-                                  '1100':'Unassigned',
-                                  '1200':'Unassigned',
-                                  '1300':'Unassigned',
-                                  '1400':'Unassigned',
-                                  '1500':'Unassigned',
-                                  '1600':'Unassigned',
-                                  '1700':'Unassigned',
-                                  '1800':'Unassigned',
-                                  '1900':'Unassigned',
-                                  '2000':'Unassigned',
-                                  '2100':'Unassigned'});
-                }
+                
+                var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/shifts/'+param('company')+'/'+year+'/'+week+'/'+count+'/'+date.format("DD-MM"));
+                shiftRef.set(shiftFormat);
+                
                 count++;
               }
             }
@@ -381,12 +424,13 @@ var Rota = React.createClass({
     autoAssign: function(){
       var shiftsToAssign = this.getShifts();
       var employeeAvailabilities = this.state.employeeAvailabilities;
-
+      var minShift = this.state.constraints[2];
 
       for(var day in shiftsToAssign){
         var availableTimes = shiftsToAssign[day];
 
-        for(var times = 0; times<availableTimes.length; times++){
+        for(var times = 0; times<availableTimes.length; times+=0){
+
           var employeesThatAreAvailable =[];
           //console.log(day +": " + availableTimes[times]);
           for(var id in employeeAvailabilities){
@@ -394,32 +438,98 @@ var Rota = React.createClass({
               employeesThatAreAvailable.push(id);
             }
           }
-          /*console.log("The following can work " + day + " at " + availableTimes[times]);
-          console.log(employeesThatAreAvailable);*/
+         /*
+          * Function - Checks if available Employees have day 'booked off'
+          */
+          var employeesAvailableAfterHolidays = this.bookedOff(employeesThatAreAvailable, day, availableTimes[times]);
 
-          employeesThatAreAvailable = this.bookedOff(employeesThatAreAvailable, day, availableTimes[times]);
-          console.log(employeesThatAreAvailable);
-          /*
-           * Add Logic Here to Check if any employee in 
-           * the above [] has 'day' booked off.
-           *
-           */
-          break;
+         /*
+          * Function - Checks if available Employees can work X more shifts
+          */
+          var employeesThatCanWorkXMoreShifts = [];
+          for(var i = 0; i<employeesAvailableAfterHolidays.length; i++){
+            
+            var flag = false;
+            for(var j = 1; j<minShift; j++){
+              if(employeeAvailabilities[employeesAvailableAfterHolidays[i]][day].includes(availableTimes[times+j])){
+                flag = true;
+              }else{
+                flag = false;
+                break;
+              }
+            }
+
+            if(flag){
+              employeesThatCanWorkXMoreShifts.push(employeesAvailableAfterHolidays[i]);
+            }
+          }
+
+          console.log("The following can work " + day + " at " + availableTimes[times] + " for a at least " + minShift + " shifts.");
+          console.log(employeesThatCanWorkXMoreShifts);
+
+           /*
+            * After Assigning,
+            * Apply logic here to skip the assigned shifts.
+            */
+           var numOfHoursAssigned = 4;
+           times+=numOfHoursAssigned;
+           break;
         }
         break;
       }
     },
 
     bookedOff: function(employees, day, time){
-      //console.log("The following can work " + day + " at " + time);
-      for(var i = 0; i < employees.length; i++){
-        var employeeID = employees[i];
+      var holidaysApproved = this.state.holidays[0];
+      var employeesWithHolidaysApproved = [];
+      var date = moment([this.state.yearVal]).week(this.state.weekVal).day(day).format("DD-MM-YYYY");
+      var employeesAvailable = [];
+
+
+      for(var id in holidaysApproved){
+        employeesWithHolidaysApproved.push(id);
       }
 
+      for(var i = 0; i < employees.length; i++){
+        var employeeID = employees[i];
+        if(employeesWithHolidaysApproved.includes(employeeID)){
+          /*
+           * The following employees are available for the
+           * selected shift BUT do have holidays booked.
+           * Check if the selected dday is booked off.
+           */
+          var employeeHolidays = holidaysApproved[employeeID]['dates'];
+          if(!employeeHolidays.includes(date)){
+            employeesAvailable.push(employeeID);
+          }
+        }
+        else{
+          employeesAvailable.push(employeeID);
+        }
 
+      }
 
+      return employeesAvailable;
+    },
 
-      return ["Manus"];
+    createHeader: function(item, index){
+
+      return (<button key={index} className="time-slot">{timeMap[item]}</button>);
+    },
+
+    getTableHeaders: function(){
+      var arrayOfTimes = [];
+      for(var day in this.state.requirements){
+        for(var time in this.state.requirements[day]){
+          if(this.state.requirements[day][time]!='No'){
+            if(!arrayOfTimes.includes(time)){
+              arrayOfTimes.push(time);
+            }
+          }
+        }
+      }
+
+      return (<span>{arrayOfTimes.map(this.createHeader)}</span>);
     },
   
   render: function() {
@@ -447,28 +557,16 @@ var Rota = React.createClass({
                     Week {this.state.weekVal}
                     <a className="weekArrows" onClick={this.incWeek}><FontAwesome name='arrow-right' /></a>
               </button>
-              <button className="time-slot">9:00</button>
-              <button className="time-slot">10:00</button>
-              <button className="time-slot">11:00</button>
-              <button className="time-slot">12:00</button>
-              <button className="time-slot">13:00</button>
-              <button className="time-slot">14:00</button>
-              <button className="time-slot">15:00</button>
-              <button className="time-slot">16:00</button>
-              <button className="time-slot">17:00</button>
-              <button className="time-slot">18:00</button>
-              <button className="time-slot">19:00</button>
-              <button className="time-slot">20:00</button>
-              <button className="time-slot">21:00</button>
+              {this.getTableHeaders()}
             </div>
          
-            <ShiftRow userType={this.state.userType} row = { 0 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(0).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 1 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(1).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 2 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(2).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 3 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(3).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 4 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(4).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 5 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(5).week(this.state.weekVal).format("ddd Do MMM") } />
-            <ShiftRow userType={this.state.userType} row = { 6 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(6).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 0 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(0).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 1 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(1).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 2 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(2).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 3 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(3).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 4 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(4).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 5 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(5).week(this.state.weekVal).format("ddd Do MMM") } />
+            <ShiftRow requirements={this.state.requirements} userType={this.state.userType} row = { 6 } dropdownStatus = {this.state.showDropDown} changeDropdownStatus = {this.changeDropDownState} shifts={ this.state.shifts } weekVal={ this.state.weekVal } date = { moment(this.state.yearVal, "YYYY").day(6).week(this.state.weekVal).format("ddd Do MMM") } />
            
           </div>
         </Well>

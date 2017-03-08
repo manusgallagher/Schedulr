@@ -59,7 +59,7 @@ var RowHeaders = React.createClass({
         return (<div key={index} className="col-sm-1" style={style.tableCells}>{item}</div>);
     }
     var times = [];
-
+    console.log(this.props.data);
     for(var i in this.props.data){
       var dayAvailabilities = this.props.data[i];
 
@@ -165,15 +165,15 @@ export default React.createClass({
             var availabilitiesArr = [];
             
 
-            for(var day=0; day<7; day++){
-              var obj = {};
-              var dailyAvailabilitiesArr =[];
-              var dayShifts = this.state.requirements[day];
+              for(var day=0; day<7; day++){
+                var obj = {};
+                var dailyAvailabilitiesArr =[];
+                var dayShifts = this.state.requirements[day];
 
-              for(var i in dayShifts){
-                if(dayShifts[i]!='No'){
-                  obj[i] = false;
-                }
+                for(var i in dayShifts){
+                  if(dayShifts[i]!='No'){
+                    obj[i] = false;
+                  }
                   
                 } 
                 new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/' + param('company') + '/Employees/' + param('id')+"/availabilities/"+day).update(obj);

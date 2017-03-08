@@ -257,6 +257,20 @@ body{
   cursor:pointer;
 }
 
+.notOpen{
+  background:none; 
+  border: none;
+  cursor:default;
+}
+
+.notOpen span{
+  color: #f5f5f5;
+}
+
+.notOpen:focus {
+  outline:0;
+}
+
 .assigning     { 
   background:#D1EFFF;
   border: 1.7px solid #00121C; 

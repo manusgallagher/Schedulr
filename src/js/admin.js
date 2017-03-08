@@ -3,43 +3,9 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, browserHistory } from 'react-router';
 import { Well, Row, Col } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import Select from 'react-select';
+import moment from 'moment';
 
-/*
- * CODE USED TO AUTO ADD DATES TO FIREBASE
- *
- *
-    for(var day=0; day<7; day++){
-      var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+param('company')+'/ShiftRequirements/'+day);
-      shiftRef.set({  '000' :'No',
-                      '100' :'No',
-                      '200' :'No',
-                      '300' :'No',
-                      '400' :'No',
-                      '500' :'No',
-                      '600' :'No',
-                      '700' :'No',
-                      '800' :'No',
-                      '900' :'No',
-                      '1000':'No',
-                      '1100':'No',
-                      '1200':'No',
-                      '1300':'No',
-                      '1400':'No',
-                      '1500':'No',
-                      '1600':'No',
-                      '1700':'No',
-                      '1800':'No',
-                      '1900':'No',
-                      '2000':'No',
-                      '2100':'No',
-                      '2200':'No',
-                      '2300':'No'});
-
-
-    }/**/
-
-    function param(name, url) {
+  function param(name, url) {
       if (!url) {
         url = window.location.href;
       }
@@ -60,7 +26,16 @@ import Select from 'react-select';
 
 
 var ShiftRequirementsRow = React.createClass({
+  mixins: [ReactFireMixin],
+   getInitialState: function () {
+    return {
+      shifts: [],
+    }
+  },
 
+  componentWillMount(){
+    this.bindAsArray(new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017"), "shifts");
+  },
   render: function() {
     var _this = this;
     var createCell = function(item, index) {
@@ -72,16 +47,41 @@ var ShiftRequirementsRow = React.createClass({
        }
 
        time = time +"00";
+        var updateShiftsToNotOpen = function(time, row){  
+          var shifts =  _this.state.shifts;
+          for(var i in shifts){
+            for(var date in shifts[i][row]){
+              shifts[i][row][date][time]="Not Open";
+            }         
+          }
 
-       var assignRequirement = function(row, time, cellID){
-        var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements/"+row);
-        var obj = {};
+          return shifts; 
+        }
+
+        var updateShiftsToNotAssigned = function(time, row){  
+          var shifts =  _this.state.shifts;
+          for(var i in shifts){
+            for(var date in shifts[i][row]){
+              if(shifts[i][row][date][time]==="Not Open"){
+                shifts[i][row][date][time]="Unassigned";
+              }
+            }         
+          }
+
+          return shifts; 
+        }
+
+        var assignRequirement = function(row, time, cellID){
+          var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements/"+row);
+          var obj = {};
 
         if($('#requirement-'+cellID).html()=='No'){
 
           
           obj[time]='1';
           shiftRef.update(obj);
+          var updatedShifts = updateShiftsToNotAssigned(time, row);
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017").set(updatedShifts);
 
         } else if($('#requirement-'+cellID).html()=='1'){
 
@@ -91,10 +91,11 @@ var ShiftRequirementsRow = React.createClass({
         } else {
 
           obj[time]='No';
-          shiftRef.update(obj);   
-
+          shiftRef.update(obj);          
+          var updatedShifts = updateShiftsToNotOpen(time, row);
+          new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017").set(updatedShifts);
         }
-        var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
+          var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
           var employees = snapshot.val();
           for(var id in employees){
             //console.log(id);
@@ -239,13 +240,55 @@ export default React.createClass({
       });
     }.bind(this));
 
-    new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/0TI1WWQ/constraints").once("value", function(snap){
-      this.setState({
-        maxShift: snap.val().MaxShift,
-        minShift: snap.val().MinShift,
-        maxWeekly: snap.val().MaxWeekly,
-      });
+    new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/constraints").once("value", function(snap){
+      if(snap.val()){
+        this.setState({
+          maxShift: snap.val().MaxShift,
+          minShift: snap.val().MinShift,
+          maxWeekly: snap.val().MaxWeekly,
+        });
+      }else{
+        this.constraintRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/constraints");
+        this.constraintRef.update({
+          MaxWeekly: 40,
+          MaxShift: 8,
+          MinShift: 4,
+        });
+      }      
     }.bind(this));
+
+
+    new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/ShiftRequirements").once("value", function(snap){
+      if(!snap.val()){
+        for(var day=0; day<7; day++){
+          var shiftRef = new Firebase('https://schedulr-c0fd7.firebaseio.com/companies/'+param('company')+'/ShiftRequirements/'+day);
+          shiftRef.set({  '000' :'No',
+                          '100' :'No',
+                          '200' :'No',
+                          '300' :'No',
+                          '400' :'No',
+                          '500' :'No',
+                          '600' :'No',
+                          '700' :'No',
+                          '800' :'No',
+                          '900' :'No',
+                          '1000':'No',
+                          '1100':'No',
+                          '1200':'No',
+                          '1300':'No',
+                          '1400':'No',
+                          '1500':'No',
+                          '1600':'No',
+                          '1700':'No',
+                          '1800':'No',
+                          '1900':'No',
+                          '2000':'No',
+                          '2100':'No',
+                          '2200':'No',
+                          '2300':'No'});
+        }
+      }
+    });
   },
 
   getLink: function(page){
