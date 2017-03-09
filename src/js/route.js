@@ -121,7 +121,7 @@ firebase.auth().onAuthStateChanged(function(user) {
               /*You Don't Need to Add User Details...*/
               if(snap.val().EmployeeOf){
                 var companyid = snap.val().EmployeeOf.UniqueID;
-                var newUrl =encodeURI("/admin?id="+user.uid+"&company="+companyid);
+                var newUrl =encodeURI("/home?id="+user.uid+"&company="+companyid);
 
                 window.openAppRoute(newUrl);
               
