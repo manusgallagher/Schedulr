@@ -72,6 +72,7 @@ var RowHeaders = React.createClass({
         if($.inArray(el, uniqueTimes) === -1) uniqueTimes.push(el);
     });
 
+    
     return (<div className="row">
               <div className="col-sm-1" style={style.tableCellsTimes}>
               </div>
