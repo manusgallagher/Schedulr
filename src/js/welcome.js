@@ -59,7 +59,6 @@ var RowHeaders = React.createClass({
         return (<div key={index} className="col-sm-1" style={style.tableCells}>{item}</div>);
     }
     var times = [];
-    console.log(this.props.data);
     for(var i in this.props.data){
       var dayAvailabilities = this.props.data[i];
 
