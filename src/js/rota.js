@@ -71,8 +71,6 @@ var ShiftRow = React.createClass({
           }else{
             _this.props.changeDropdownStatus(false);
           }
-
-          //console.log(shiftsToAssign);
         }
       }
       var cellClicked = function(row, column, cellID, userType){
@@ -310,11 +308,6 @@ var Rota = React.createClass({
           var shiftTime = shiftDetails[date];
           var shiftDate = date+"-2017";
           var dow = moment(shiftDate, "DD-MM-YYYY").day();
-
-          /*
-          * REMOVE THIS
-          *
-          console.log("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017/"+this.state.weekVal+"/"+dow+"/"+date);*/
 
           var obj ={};
           var shiftRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/"+this.state.yearVal+"/"+this.state.weekVal+"/"+dow+"/"+date);

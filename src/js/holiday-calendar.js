@@ -55,6 +55,7 @@ export default React.createClass({
         }
     },
     handleChange: function(date) {
+        console.log(date);
         this.setState({
             startDate: date
         });
@@ -82,9 +83,7 @@ export default React.createClass({
         if(reqHolidays.includes(date) || appHolidays.includes(date)){
             console.log("NOPE");
         }else{
-            console.log(userID + " has requested to book off: " + date + " for company: " + companyID);
             reqHolidays.push(date);
-            console.log(reqHolidays);
             this.setState({
                 datesPending: reqHolidays,
             });

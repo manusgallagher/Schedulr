@@ -508,7 +508,7 @@ body{
   width: 100%;
   text-align: center;
   text-decoration: none;
-  background: #BDBDBD;
+  background: #9B9B9B;
   border: none;
   border-radius: 3px;
   margin-bottom: 1px;
@@ -516,6 +516,7 @@ body{
 
 #employeesPending button:focus {
   outline:0;
+  background: #c6c6c6;
 }
 
 #employeesPending button:hover {
@@ -537,7 +538,7 @@ body{
   width: 100%;
   text-align: center;
   text-decoration: none;
-  background: #BDBDBD;
+  background: #9B9B9B;
   border: none;
   margin-bottom: 1px;
   border-radius: 3px;
@@ -545,6 +546,7 @@ body{
 
 #holidayStatusPending button:focus {
   outline:0;
+  background: #c6c6c6;
 }
 
 #holidayStatusPending button:hover {

@@ -95,29 +95,34 @@ var ShiftRequirementsRow = React.createClass({
           var updatedShifts = updateShiftsToNotOpen(time, row);
           new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/2017").set(updatedShifts);
         }
-          var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
-          var employees = snapshot.val();
-          for(var id in employees){
-            //console.log(id);
-            var availObj = {};
-            
 
-            var key = "";
-            var val = "";
-            for(key in obj){
-              val = obj[key];
+          /*
+           * Prevents corruption of User
+           * Details.
+           */
+          /*var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
+            var employees = snapshot.val();
+            for(var id in employees){
+              //console.log(id);
+              var availObj = {};
+              
+
+              var key = "";
+              var val = "";
+              for(key in obj){
+                val = obj[key];
+              }
+
+              if(val==='No'){
+                availObj[time]=null;
+                new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
+
+              }else{
+                availObj[time]=false;
+                new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
+              }
             }
-
-            if(val==='No'){
-              availObj[time]=null;
-              new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
-
-            }else{
-              availObj[time]=false;
-              new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
-            }
-          }
-        });
+          });*/
 
       }
 
