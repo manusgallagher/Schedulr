@@ -100,7 +100,7 @@ var ShiftRequirementsRow = React.createClass({
            * Prevents corruption of User
            * Details.
            */
-          /*var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
+          var employeeListRef = new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/").once('value', function(snapshot){
             var employees = snapshot.val();
             for(var id in employees){
               //console.log(id);
@@ -122,7 +122,7 @@ var ShiftRequirementsRow = React.createClass({
                 new Firebase("https://schedulr-c0fd7.firebaseio.com/companies/"+param('company')+"/Employees/"+id+"/availabilities/"+row).update(availObj);
               }
             }
-          });*/
+          });/**/
 
       }
 
