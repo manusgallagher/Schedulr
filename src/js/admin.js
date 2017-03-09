@@ -515,13 +515,13 @@ export default React.createClass({
                           <td className="tableHeaders">22:00</td>
                           <td className="tableHeaders">23:00</td>
                         </tr>
-                        <ShiftRequirementsRow row={0} day={'Monday'}    requirements={this.state.requirements[0]} />
-                        <ShiftRequirementsRow row={1} day={'Tuesday'}   requirements={this.state.requirements[1]} />
-                        <ShiftRequirementsRow row={2} day={'Wednesday'} requirements={this.state.requirements[2]} />
-                        <ShiftRequirementsRow row={3} day={'Thursday'}  requirements={this.state.requirements[3]} />
-                        <ShiftRequirementsRow row={4} day={'Friday'}    requirements={this.state.requirements[4]} />
-                        <ShiftRequirementsRow row={5} day={'Saturday'}  requirements={this.state.requirements[5]} />
-                        <ShiftRequirementsRow row={6} day={'Sunday'}    requirements={this.state.requirements[6]} />
+                        <ShiftRequirementsRow row={0} day={'Sunday'}    requirements={this.state.requirements[0]} />
+                        <ShiftRequirementsRow row={1} day={'Monday'}    requirements={this.state.requirements[1]} />
+                        <ShiftRequirementsRow row={2} day={'Tuesday'}   requirements={this.state.requirements[2]} />
+                        <ShiftRequirementsRow row={3} day={'Wednesday'} requirements={this.state.requirements[3]} />
+                        <ShiftRequirementsRow row={4} day={'Thursday'}  requirements={this.state.requirements[4]} />
+                        <ShiftRequirementsRow row={5} day={'Friday'}    requirements={this.state.requirements[5]} />
+                        <ShiftRequirementsRow row={6} day={'Saturday'}  requirements={this.state.requirements[6]} />
                       </tbody>
                     </table>
                   </div>
