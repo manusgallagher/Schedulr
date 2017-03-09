@@ -237,13 +237,13 @@ export default React.createClass({
 
                   <legend><h4>Save Your Weekly Availabilities:</h4></legend>
                   <RowHeaders data={this.state.availabilities} />
-                  <AvailabilityRow data={this.state.availabilities[0]} row={0} day={"Monday"} />
-                  <AvailabilityRow data={this.state.availabilities[1]} row={1} day={"Tuesday"} />
-                  <AvailabilityRow data={this.state.availabilities[2]} row={2} day={"Wednesday"} />
-                  <AvailabilityRow data={this.state.availabilities[3]} row={3} day={"Thursday"} />
-                  <AvailabilityRow data={this.state.availabilities[4]} row={4} day={"Friday"} />
-                  <AvailabilityRow data={this.state.availabilities[5]} row={5} day={"Saturday"} />
-                  <AvailabilityRow data={this.state.availabilities[6]} row={6} day={"Sunday"} />
+                  <AvailabilityRow data={this.state.availabilities[0]} row={0} day={"Sunday"} />
+                  <AvailabilityRow data={this.state.availabilities[1]} row={1} day={"Monday"} />
+                  <AvailabilityRow data={this.state.availabilities[2]} row={2} day={"Tuesday"} />
+                  <AvailabilityRow data={this.state.availabilities[3]} row={3} day={"Wednesday"} />
+                  <AvailabilityRow data={this.state.availabilities[4]} row={4} day={"Thursday"} />
+                  <AvailabilityRow data={this.state.availabilities[5]} row={5} day={"Friday"} />
+                  <AvailabilityRow data={this.state.availabilities[6]} row={6} day={"Saturday"} />                  
                 </div> 
                 : null 
               }
