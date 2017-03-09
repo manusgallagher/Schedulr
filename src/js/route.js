@@ -14,11 +14,14 @@ import Admin from './admin'
 import injectTapEventPlugin from 'react-tap-event-plugin';
 injectTapEventPlugin();
 
+var ReactGA = require('react-ga');
+ReactGA.initialize('UA-43242176-2');
+
 /* 
  * ROUTE RENDERING CODE.
  */
 ReactDOM.render((
-  <Router history={hashHistory}>
+  <Router history={hashHistory} onUpdate={logPageView}>
     <Route path="/" component={Login}/>
     <Route path="/signup" component={Signup}/>
     <Route path="/companyregistration" component={CompanyRegistration}/>
@@ -47,6 +50,23 @@ const openAppRoute = (route) => {
 };
 window.openAppRoute = openAppRoute;
 
+function logPageView() {
+  var url = window.location.href;
+  var lastSegment = url.split('/').pop();
+  var newAddress = "";
+
+  for(var i in lastSegment){
+    if(lastSegment[i]==="?"){
+      break;
+    }else{
+      newAddress+=(lastSegment[i]);
+    }
+  }
+  newAddress = "/"+newAddress;
+
+  ReactGA.set({ page: newAddress });
+  ReactGA.pageview(newAddress);
+}
 
 /* PAGE SETUP CODE.
  * Migrated from Index.js.
