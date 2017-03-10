@@ -5,6 +5,7 @@ import { Well, Modal, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import moment from 'moment';
 import { Table } from 'react-bootstrap';
+var ReactGA = require('react-ga');
 
 
 function param(name, url) {
@@ -31,6 +32,10 @@ var ShiftRow = React.createClass({
     var createCell = function(item, index) {
 
       var unassignedCellClicked = function(row, column, cellID, userType){
+        ReactGA.event({
+          category: param('id'),
+          action: 'Clicked to Assign a Shift'
+        });
         if(userType==="Employer"){
           var date = shiftDates[row];
           var time = shiftTimes[column];
@@ -78,6 +83,11 @@ var ShiftRow = React.createClass({
           /*
            * CODE TO REASSIGN ASSIGNED SHIFTS
            */
+         
+        ReactGA.event({
+          category: param('id'),
+          action: 'Clicked an Assigned Shift'
+        });
           console.log(cellID);
         }
       }
