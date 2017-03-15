@@ -577,3 +577,6 @@ body{
   outline:0;
 }
 
+#arrowsAndWeekVal: focus{
+  outline:0;
+}

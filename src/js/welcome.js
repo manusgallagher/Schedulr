@@ -212,21 +212,7 @@ export default React.createClass({
           <div className="col-sm-3">
             <div className="well" id="welcomeWell">
                 <div id = "welcomeMessage">
-                  Welcome to <span id="compName" style={style.name}>{this.state.companyName}</span>.
-                  <br/>
-                  <br/>
-                  <br/>
-                  <span>
-                  ***********************************
-                  <br/>
-                  <br/>
-                  Insert Content Here
-                  <br/>
-                  <br/>
-                  ***********************************
-                  </span>
-                  <br/>
-                  <br/>
+                  <h4>Welcome to <span id="compName" style={style.name}>{this.state.companyName}</span>.</h4>
                   <br/>
                   <p id= "companyID"><b>Company ID:</b> {param('company')}</p>
                 </div>
