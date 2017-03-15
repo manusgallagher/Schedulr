@@ -119,6 +119,12 @@ export default React.createClass({
 	          Created: now
 	      	});
 
+	      	firebase.database().ref('companies/' + generatedId + '/constraints').set({
+	          MaxShift: 8,
+	          MaxWeekly: 40,
+	          MinShift: 4,
+	      	});
+
 	      	firebase.database().ref('users/' + UID + '/EmployerOf').set({
 	          Name: name,
 	          UniqueID: generatedId,

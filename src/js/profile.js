@@ -47,6 +47,10 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
       border: 0,
       width: '100%',
     },
+    removeLink:{
+      float: 'right',
+      cursor: 'default',
+    },
   };
 
 export default React.createClass({
@@ -220,6 +224,7 @@ export default React.createClass({
                 <button onClick={this.updateDetails}>Update</button>
             </div>
           </form>
+          <a style={style.removeLink}> Remove Profile </a>
         </Well>
         <MuiThemeProvider>
           <Snackbar
