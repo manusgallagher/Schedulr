@@ -1,50 +1,50 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, Route, Link, browserHistory } from 'react-router'
+import React from "react";
+import ReactDOM from "react-dom";
+import { Router, Route, Link, browserHistory } from "react-router";
 
 export default React.createClass({
-  getInitialState: function() {
-    return {
-      loading: false,
-    };
-  },
+	getInitialState: function() {
+		return {
+			loading: false,
+		};
+	},
 
-  logIn: function() {
-          var email = $("#loginemail").val();
-          var pswd = $("#loginpswd").val();
-          $("#loginError").hide();
+	logIn: function() {
+		var email = $("#loginemail").val();
+		var pswd = $("#loginpswd").val();
+		$("#loginError").hide();
 
-          if(email.length > 0 && pswd.length){
-            this.setState({
-              loading: true,
-            });
-            var _this = this;
-            firebase.auth().signInWithEmailAndPassword(email, pswd).catch(function(error) {
-              $("#loginError").show().text(error.message);
-              $("#loginBodyFields").show();
-              _this.setState({
-                loading: false,
-              });
-              $("#loginpswd").val("");
-            });
+		if(email.length > 0 && pswd.length){
+			this.setState({
+				loading: true,
+			});
+			var _this = this;
+			firebase.auth().signInWithEmailAndPassword(email, pswd).catch(function(error) {
+				$("#loginError").show().text(error.message);
+				$("#loginBodyFields").show();
+				_this.setState({
+					loading: false,
+				});
+				$("#loginpswd").val("");
+			});
 
-            $("#loginBodyFields").hide();
-          }else if(email.length === 0){
-            $("#loginError").show().text("Please Enter an Email Address.");
-          }else if(pswd.length === 0){
-            $("#loginError").show().text("Please Enter a Password.");
-          }
+			$("#loginBodyFields").hide();
+		}else if(email.length === 0){
+			$("#loginError").show().text("Please Enter an Email Address.");
+		}else if(pswd.length === 0){
+			$("#loginError").show().text("Please Enter a Password.");
+		}
 
           
-    },
-   keyDown: function(event) {
-      if(event.key==="Enter"){
-        this.logIn();
-      }
-    },
+	},
+	keyDown: function(event) {
+		if(event.key==="Enter"){
+			this.logIn();
+		}
+	},
     
-  render() {
-    return (
+	render() {
+		return (
       <div>
         <div className="modal fade" id="LoginModal" role="dialog"> 
           <div className="modal-dialog"> 
@@ -78,8 +78,8 @@ export default React.createClass({
           </div>
         </div>        
       </div>
-    );
-  }
+		);
+	}
 });
 
 
