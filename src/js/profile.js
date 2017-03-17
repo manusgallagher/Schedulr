@@ -188,42 +188,46 @@ export default React.createClass({
     });
   },
 
+  keyDown: function(event) {
+		if(event.key==="Enter"){
+			this.updateDetails();
+		}
+	},
+
   render() {
     return (
       <div>
         <div>{this.props.children}</div>
         <Well style={style.well}>
-          <form>
             <div style={style.userContent}>
               <h3>Update Details: </h3>
               <table style={style.profile}>
                 <tbody>
                   <tr>
                     <td style={style.cell}><b>Name:</b></td>
-                    <td style={style.cell}><input style={style.userDetails} id ="userName" type="text" onChange={ this.handleChangeName } value ={this.state.name} /></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userName" type="text" onChange={ this.handleChangeName } value ={this.state.name} onKeyPress={this.keyDown} /></td>
                   </tr>
                   <tr>
                     <td style={style.cell}><b>Surname:</b></td>
-                    <td style={style.cell}><input style={style.userDetails} id ="userSurname" type="text" onChange={ this.handleChangeSurname } value ={this.state.surname} /></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userSurname" type="text" onChange={ this.handleChangeSurname } value ={this.state.surname} onKeyPress={this.keyDown} /></td>
                   </tr>
                   <tr>
                     <td style={style.cell}><b>Address:</b></td>
-                    <td style={style.cell}><textarea style={style.userDetails} id="userAddress" onChange={ this.handleChangeAddress }  rows="4" cols="22" value={this.state.address}/>
+                    <td style={style.cell}><textarea style={style.userDetails} id="userAddress" onChange={ this.handleChangeAddress }  rows="4" cols="22" value={this.state.address} onKeyPress={this.keyDown}/>
                     </td>
                   </tr>
                   <tr>
                     <td style={style.cell}><b>Phone Number:</b></td>
-                    <td style={style.cell}><input style={style.userDetails} id ="userPhone" onChange={ this.handleChangePhone }  type="text" value ={this.state.phone} /></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userPhone" onChange={ this.handleChangePhone }  type="text" value ={this.state.phone} onKeyPress={this.keyDown} /></td>
                   </tr>
                   <tr>
                     <td style={style.cell}><b>Email Address:</b></td>
-                    <td style={style.cell}><input style={style.userDetails} id ="userEmail" onChange={ this.handleChangeEmail }  type="text" value ={this.state.email} /></td>
+                    <td style={style.cell}><input style={style.userDetails} id ="userEmail" onChange={ this.handleChangeEmail }  type="text" value ={this.state.email} onKeyPress={this.keyDown} /></td>
                   </tr>
                 </tbody>
               </table>
-                <button onClick={this.updateDetails}>Update</button>
+                <button onClick={this.updateDetails} onKeyPress={this.keyDown}>Update</button>
             </div>
-          </form>
           <a style={style.removeLink}> Remove Profile </a>
         </Well>
         <MuiThemeProvider>
