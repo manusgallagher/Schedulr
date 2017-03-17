@@ -56,7 +56,6 @@ export default React.createClass({
   render() {
     return (
       <div>
-
           <div className="modal fade" id="AddUserModal" role="dialog"> 
             <div className="modal-dialog"> 
               {/* Modal content */} 
