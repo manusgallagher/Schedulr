@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {grey800, grey400, red900} from 'material-ui/styles/colors';
