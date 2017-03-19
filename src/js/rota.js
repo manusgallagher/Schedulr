@@ -237,20 +237,20 @@ var Rota = React.createClass({
                                 '700' :'Not Open',
                                 '800' :'Not Open',
                                 '900' :'Not Open',
-                                '1000':'Not Open',
-                                '1100':'Not Open',
-                                '1200':'Not Open',
-                                '1300':'Not Open',
-                                '1400':'Not Open',
-                                '1500':'Not Open',
-                                '1600':'Not Open',
-                                '1700':'Not Open',
-                                '1800':'Not Open',
-                                '1900':'Not Open',
-                                '2000':'Not Open',
-                                '2100':'Not Open',
-                                '2200':'Not Open',
-                                '2300':'Not Open',};
+                                '1000':'Unassigned',
+                                '1100':'Unassigned',
+                                '1200':'Unassigned',
+                                '1300':'Unassigned',
+                                '1400':'Unassigned',
+                                '1500':'Unassigned',
+                                '1600':'Unassigned',
+                                '1700':'Unassigned',
+                                '1800':'Unassigned',
+                                '1900':'Unassigned',
+                                '2000':'Unassigned',
+                                '2100':'Unassigned',
+                                '2200':'Unassigned',
+                                '2300':'Unassigned',};
 
                 var date = moment(year, "YYYY").day(day).week(week);
                 
@@ -427,12 +427,11 @@ var Rota = React.createClass({
     autoAssign: function(){
       var shiftsToAssign = this.getShifts();
       var employeeAvailabilities = this.state.employeeAvailabilities;
-      var minShift = this.state.constraints[2];
 
       for(var day in shiftsToAssign){
         var availableTimes = shiftsToAssign[day];
 
-        for(var times = 0; times<availableTimes.length; times+=0){
+        for(var times = 0; times<availableTimes.length; times+=0 ){
 
           var employeesThatAreAvailable =[];
           //console.log(day +": " + availableTimes[times]);
@@ -446,39 +445,28 @@ var Rota = React.createClass({
           */
           var employeesAvailableAfterHolidays = this.bookedOff(employeesThatAreAvailable, day, availableTimes[times]);
 
+
          /*
           * Function - Checks if available Employees can work X more shifts
           */
-          var employeesThatCanWorkXMoreShifts = [];
-          for(var i = 0; i<employeesAvailableAfterHolidays.length; i++){
-            
-            var flag = false;
-            for(var j = 1; j<minShift; j++){
-              if(employeeAvailabilities[employeesAvailableAfterHolidays[i]][day].includes(availableTimes[times+j])){
-                flag = true;
-              }else{
-                flag = false;
-                break;
-              }
-            }
-
-            if(flag){
-              employeesThatCanWorkXMoreShifts.push(employeesAvailableAfterHolidays[i]);
-            }
-          }
-
-          console.log("The following can work " + day + " at " + availableTimes[times] + " for a at least " + minShift + " shifts.");
-          console.log(employeesThatCanWorkXMoreShifts);
+          var randEmployeeVal = Math.floor(Math.random() * employeesAvailableAfterHolidays.length);
+          var employeeToAssign = employeesAvailableAfterHolidays[randEmployeeVal];
 
            /*
-            * After Assigning,
-            * Apply logic here to skip the assigned shifts.
+            * Assign to Next 4 Days
+            *
             */
-           var numOfHoursAssigned = 4;
-           times+=numOfHoursAssigned;
-           break;
+          if(availableTimes.length>=4){
+            for(var trial = 0; trial<4; trial++){
+              var obj = {};
+              obj[availableTimes[times+trial]]=this.state.companyEmployees[employeeToAssign];
+              var dateBeingAssigned = moment([this.state.yearVal]).week(this.state.weekVal).day(day).format("DD-MM");
+              this.autoAssignShifts = new Firebase("https://schedulr-c0fd7.firebaseio.com/shifts/"+param('company')+"/"+this.state.yearVal+"/"+this.state.weekVal+"/"+day+"/"+dateBeingAssigned).update(obj); 
+              
+            }
+            times+=4;
+          }
         }
-        break;
       }
     },
 
