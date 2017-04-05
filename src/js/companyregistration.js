@@ -165,11 +165,9 @@ export default React.createClass({
 				<a onClick={this.joinCompany} className="btn btn-lg btn-primary joinCompany"><span className="glyphicon glyphicon-cloud" /> Join Company</a>
 			</div>
 			<div id="joinACompany">
-				<form>
-					<p id="idError"></p>
-					<input id="companyID" type="text" className="form-control" placeholder="Unique ID..." /><br />
-					<button onClick={this.submitID} className="btn btn-default btn-success"><i className="fa fa-paper-plane-o" /> Submit</button>
-				</form>
+				<p id="idError"></p>
+				<input id="companyID" type="text" className="form-control" onKeyPress={this.keyDown} placeholder="Unique ID..." /><br />
+				<button onClick={this.submitID} className="btn btn-default btn-success"><i className="fa fa-paper-plane-o" /> Submit</button>
 			</div>
 			<div id="createACompany">
 				<table>
